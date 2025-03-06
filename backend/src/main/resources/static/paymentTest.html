@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Title</title>
+</head>
+<body>
+<button onclick="pay()">결제하기</button>
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+<script>
+  async function pay() {
+    const response = await fetch("/api/bookings/payments/uid");
+    const data = await response.json();
+    const apiId = await data.data.apiId;
+    const channelKey = await data.data.channelKey;
+    const merchantUid = await data.data.merchantUid;
+
+    IMP.init(apiId);
+    IMP.request_pay(
+      {
+        channelKey: channelKey,
+        merchant_uid: merchantUid,
+        name: "주문명:결제테스트",
+        amount: 1004,
+        buyer_email: "test@portone.io",
+        buyer_name: "구매자이름",
+        buyer_tel: "010-1234-5678",
+      },
+      function (rsp) {
+        if (rsp.success) {
+          alert("결제 성공");
+          console.log(rsp);
+
+          // 결제 성공 시 서버 API 호출
+          fetch(`/api/bookings/payments`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              merchantUid: rsp.merchant_uid,
+              amount: rsp.paid_amount,
+              paidAtTimestamp: rsp.paid_at
+            }),
+          })
+          .then(response => {
+            if (!response.ok) {
+              console.log(response);
+              throw new Error("API 요청 실패");
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log("서버 응답:", data);
+          })
+          .catch(error => {
+            console.error("결제 완료 후 API 호출 중 오류 발생:", error);
+          });
+
+        } else {
+          alert("결제 실패: " + rsp.error_msg);
+        }
+      }
+    );
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+.paginationContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center; /* 가운데 정렬 */
+  position: fixed; /* 화면 하단 고정 */
+  bottom: 0; /* 화면 하단에 붙이기 */
+  left: 50%; /* 가운데 정렬 */
+  transform: translateX(-50%); /* 정확한 가운데 정렬 */
+  background-color: white; /* 배경색 추가 */
+  padding: 1rem 0; /* 위아래 여백 */
+  width: 100%; /* 화면 폭에 맞게 설정 */
+  z-index: 1000; /* 다른 요소 위에 표시되도록 설정 */
+}
+
+.pageLink {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.pageLink:hover:not(.disabled) {
+  background-color: #f3f4f6;
+}
+
+.active {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}

@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:db_test;MODE=MySQL
+
+  cloud:
+    aws:
+      s3:
+        bucket: test-bucket
+      credentials:
+        access-key: test-access-key
+        secret-key: test-secret-key
+      region:
+        static: us-east-1
+
+app:
+  mode: TEST

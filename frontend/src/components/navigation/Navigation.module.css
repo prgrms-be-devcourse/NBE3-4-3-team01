@@ -1,0 +1,82 @@
+.navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #60a5fa; /* 진한 푸른색 배경 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white; /* 로고 색상을 흰색으로 변경 */
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.logo:hover {
+  opacity: 0.8; /* 호버 시 약간 투명하게 */
+}
+
+.links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.link {
+  color: rgba(255, 255, 255, 0.9); /* 약간 투명한 흰색 */
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+}
+
+.link:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1); /* 호버 시 반투명한 배경 */
+}
+
+.logoutButton {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.logoutButton:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .links {
+    gap: 1rem;
+  }
+
+  .link {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
