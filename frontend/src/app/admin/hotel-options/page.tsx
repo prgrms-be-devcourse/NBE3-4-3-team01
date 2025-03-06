@@ -17,8 +17,7 @@ import { useEffect, useState } from "react";
 
 export default function HotelOptionsPage() {
   const [options, setOptions] = useState<OptionResponse[]>([]);
-  const [editingOptionId, setEditingOptionId] = useState<number | null>(null);
-  const [editingValues, setEditingValues] = useState<Record<number, string>>(
+  const [editingOptions, setEditingOptions] = useState<Record<number, string>>(
     {}
   );
   const [newOption, setNewOption] = useState<string>("");
@@ -34,37 +33,46 @@ export default function HotelOptionsPage() {
       const data = await getAllHotelOptions();
       setOptions(data);
     } catch (error) {
-      setError("호텔 데이터를 불러오는 중 오류가 발생했습니다.");
+      setError("옵션을 불러오는 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
   };
 
   const onModify = async (optionId: number) => {
-    if (!editingValues[optionId] || !editingValues[optionId].trim()) return;
+    if (!editingOptions[optionId]?.trim()) return;
 
     try {
-      await modifyHotelOption(optionId, { name: editingValues[optionId] });
-      setEditingOptionId(null);
-      setEditingValues((prev) => {
-        const newValues = { ...prev };
-        delete newValues[optionId];
-        return newValues;
+      await modifyHotelOption(optionId, { name: editingOptions[optionId] });
+
+      setOptions((prevOptions) =>
+        prevOptions.map((option) =>
+          option.optionId === optionId
+            ? { ...option, name: editingOptions[optionId] }
+            : option
+        )
+      );
+
+      setEditingOptions((prev) => {
+        const updatedEditingOptions = { ...prev };
+        delete updatedEditingOptions[optionId];
+        return updatedEditingOptions;
       });
-      fetchOptions();
-    } catch (error) {
+    } catch (err) {
       setError("옵션 수정 중 오류가 발생했습니다.");
     }
   };
 
   const onAddOption = async () => {
     if (!newOption.trim()) return;
+
     try {
       await addHotelOption({ name: newOption });
       setNewOption("");
       fetchOptions();
     } catch (error) {
       setError("옵션 추가 중 오류가 발생했습니다.");
+    }
   };
 
   const onDelete = async (optionId: number) => {
@@ -73,12 +81,12 @@ export default function HotelOptionsPage() {
       await deleteHotelOption(optionId);
       fetchOptions();
     } catch (error: any) {
-      const msg = error.response?.data?.msg;
-      if (msg) {
-        alert(msg);
+      if (error.message) {
+        alert(error.message);
       } else {
         setError("옵션 삭제 중 오류가 발생했습니다.");
       }
+    }
   };
 
   if (loading) return <Loading />;
@@ -96,11 +104,13 @@ export default function HotelOptionsPage() {
       <div className="relative z-10">
         <Navigation />
 
-        <div className="container mx-auto px-4 pt-40">
+        <div className="container mx-auto px-4 pt-44">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">옵션 관리</h1>
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">
+              호텔 옵션 관리
+            </h1>
             <p className="text-lg text-gray-600">
-              새로운 옵션을 추가하고 관리하세요
+              호텔에서 제공하는 옵션을 추가하고 관리하세요
             </p>
           </div>
 
@@ -110,12 +120,12 @@ export default function HotelOptionsPage() {
                 {/* 옵션 추가 박스 */}
                 <div className="flex gap-3">
                   <div className="relative flex-1">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
-                      <Plus size={20} />
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+                      <Plus size={24} />
                     </div>
                     <Input
                       type="text"
-                      placeholder="새로운 옵션을 입력하세요"
+                      placeholder="새로운 객실 옵션을 입력하세요"
                       value={newOption}
                       onChange={(e) => setNewOption(e.target.value)}
                       className="h-[52px] pl-12 pr-4 text-xl bg-white placeholder:text-xl"
@@ -131,23 +141,23 @@ export default function HotelOptionsPage() {
 
                 {/* 옵션 목록 */}
                 <div className="mt-8 space-y-4">
-                  {options.map((option) => (
+                  {options.map((option, index) => (
                     <div
-                      key={option.optionId}
+                      key={option.optionId ?? `option-${index}`}
                       className="bg-white p-4 rounded-lg shadow-sm flex items-center gap-3"
                     >
-                      {editingOptionId === option.optionId ? (
+                      {editingOptions[option.optionId] !== undefined ? (
                         <div className="relative flex-1">
                           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
                             <Pencil size={20} />
                           </div>
                           <Input
-                            value={editingValues[option.optionId] ?? ""}
+                            value={editingOptions[option.optionId]}
                             onChange={(e) =>
-                              setEditingValues((prev) => ({
-                                ...prev,
+                              setEditingOptions({
+                                ...editingOptions,
                                 [option.optionId]: e.target.value,
-                              }))
+                              })
                             }
                             className="h-[42px] pl-10 pr-4 text-lg bg-white"
                           />
@@ -158,24 +168,23 @@ export default function HotelOptionsPage() {
                         </span>
                       )}
 
-                      {editingOptionId === option.optionId ? (
+                      {editingOptions[option.optionId] !== undefined ? (
                         <Button
                           onClick={() => onModify(option.optionId)}
-                          className="bg-blue-500 hover:bg-blue-600 text-white h-[42px] px-6 text-lg"
+                          className="bg-blue-500 hover:bg-blue-600 text-white h-[42px] px-6 text-lg min-w-[100px]"
                         >
                           저장
                         </Button>
                       ) : (
                         <Button
-                          onClick={() => {
-                            setEditingOptionId(option.optionId);
-                            setEditingValues((prev) => ({
-                              ...prev,
+                          onClick={() =>
+                            setEditingOptions({
+                              ...editingOptions,
                               [option.optionId]: option.name,
-                            }));
-                          }}
+                            })
+                          }
                           variant="outline"
-                          className="h-[42px] px-6 text-lg"
+                          className="h-[42px] px-6 text-lg min-w-[100px]"
                         >
                           수정
                         </Button>
