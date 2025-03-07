@@ -15,12 +15,12 @@ class BusinessValidationService(
     private val properties: BusinessApiProperties
 ) {
     fun validateBusiness(registrationInfo: BusinessRequest.RegistrationInfo): String {
-        val apiUrl: String = "${properties.validationUrl}?serviceKey=${properties.serviceKey}"
+        val apiUrl = "${properties.validationUrl}?serviceKey=${properties.serviceKey}"
         val uri: URI = URI.create(apiUrl)
 
         val registrationApiForm = BusinessRequest.RegistrationApiForm.from(registrationInfo)
 
-        try {
+        return try {
             val responseEntity = restTemplate.exchange(
                 uri,
                 HttpMethod.POST,
@@ -29,15 +29,12 @@ class BusinessValidationService(
             )
 
             val response = responseEntity.body
-
-            if (response?.data.isNullOrEmpty()) {
-                ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE.throwServiceException()
-            }
-
-            val result = response?.data?.firstOrNull()
                 ?: ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE.throwServiceException()
 
-            return result["valid"] as? String
+            val result = response.data.firstOrNull()
+                ?: ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE.throwServiceException()
+
+            result["valid"] as? String
                 ?: ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE.throwServiceException()
 
         } catch (e: Exception) {

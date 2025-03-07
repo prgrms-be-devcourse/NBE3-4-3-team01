@@ -2,10 +2,8 @@ package com.ll.hotel.domain.member.member.controller
 
 import com.ll.hotel.domain.member.member.dto.request.BusinessRequest
 import com.ll.hotel.domain.member.member.dto.response.BusinessResponse
-import com.ll.hotel.domain.member.member.entity.Business
 import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.domain.member.member.service.BusinessService
-import com.ll.hotel.domain.member.member.service.BusinessValidationService
 import com.ll.hotel.global.request.Rq
 import com.ll.hotel.global.response.RsData
 import io.swagger.v3.oas.annotations.Operation
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/businesses")
 class BusinessController(
     private val businessService: BusinessService,
-    private val businessValidationService: BusinessValidationService,
     private val rq: Rq
 ) {
 
@@ -34,10 +31,6 @@ class BusinessController(
 
         val member: Member = rq.actor
 
-        val validationResult: String = businessValidationService.validateBusiness(registrationInfo)
-
-        val business: Business = businessService.register(registrationInfo, member, validationResult)
-
-        return RsData.success(HttpStatus.CREATED, BusinessResponse.ApprovalResult.of(business))
+        return RsData.success(HttpStatus.CREATED, businessService.register(registrationInfo. member))
     }
 }
