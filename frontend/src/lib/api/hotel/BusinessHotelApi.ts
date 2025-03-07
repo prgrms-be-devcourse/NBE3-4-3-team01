@@ -91,13 +91,13 @@ export const findHotelDetail = async (
 export const findHotelDetailWithAvailableRooms = async (
   hotelId: number,
   checkInDate?: string,
-  checkoutDate?: string,
+  checkOutDate?: string,
   personal?: string
 ): Promise<GetHotelDetailResponse> => {
   try {
     const params = new URLSearchParams();
     if (checkInDate) params.set("checkInDate", checkInDate);
-    if (checkoutDate) params.set("checkoutDate", checkoutDate);
+    if (checkOutDate) params.set("checkOutDate", checkOutDate);
     if (personal) params.set("personal", personal);
 
     const response = await fetch(`${BASE_URL}/${hotelId}?${params.toString()}`);
@@ -217,7 +217,7 @@ export const getHotelList = async (
   filterName: string,
   streetAddress: string,
   checkInDate: string,
-  checkoutDate: string,
+  checkOutDate: string,
   personal: number,
   filterDirection?: string
 ): Promise<PageDto<GetHotelResponse>> => {
@@ -227,7 +227,7 @@ export const getHotelList = async (
     filterName: filterName,
     streetAddress: streetAddress,
     checkInDate: checkInDate,
-    checkoutDate: checkoutDate,
+    checkOutDate: checkOutDate,
     personal: personal.toString(),
   });
 

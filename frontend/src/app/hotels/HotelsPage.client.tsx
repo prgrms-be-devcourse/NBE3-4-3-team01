@@ -26,7 +26,7 @@ interface HotelsPageClientProps {
     filterName: FilterName;
     streetAddress: string;
     checkInDate: string;
-    checkoutDate: string;
+    checkOutDate: string;
     personal: string;
     filterDirection: string;
   };
@@ -48,7 +48,7 @@ export default function HotelsPageClient({
     filterName: String(searchParams.filterName),
     streetAddress: searchParams.streetAddress,
     checkInDate: searchParams.checkInDate,
-    checkoutDate: searchParams.checkoutDate,
+    checkOutDate: searchParams.checkOutDate,
     personal: searchParams.personal,
     filterDirection: searchParams.filterDirection,
   };
@@ -89,7 +89,7 @@ export default function HotelsPageClient({
         <HotelList
           hotels={hotelData.items}
           checkInDate={searchParams.checkInDate}
-          checkoutDate={searchParams.checkoutDate}
+          checkOutDate={searchParams.checkOutDate}
           personal={searchParams.personal}
         />
       </Suspense>
