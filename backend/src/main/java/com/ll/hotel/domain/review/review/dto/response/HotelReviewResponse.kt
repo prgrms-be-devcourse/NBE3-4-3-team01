@@ -1,9 +1,6 @@
 package com.ll.hotel.domain.review.review.dto.response;
 
-import java.util.List;
-
-public record HotelReviewResponse(
-        HotelReviewWithCommentDto hotelReviewWithCommentDto,
-        List<String> imageUrls
-) {
-}
+data class HotelReviewResponse(
+        val hotelReviewWithCommentDto : HotelReviewWithCommentDto,
+        val imageUrls : List<String>
+)

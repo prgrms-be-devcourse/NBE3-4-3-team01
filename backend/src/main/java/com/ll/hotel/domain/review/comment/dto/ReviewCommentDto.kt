@@ -4,12 +4,14 @@ import com.ll.hotel.domain.review.comment.entity.ReviewComment;
 
 import java.time.LocalDateTime;
 
-public record ReviewCommentDto(
-        long reviewCommentId,
-        String content,
-        LocalDateTime createdAt
+data class ReviewCommentDto(
+    val reviewCommentId: Long,
+    val content: String,
+    val createdAt: LocalDateTime
 ) {
-    public ReviewCommentDto(ReviewComment reviewComment){
-        this(reviewComment.getId(), reviewComment.getContent(), reviewComment.getCreatedAt());
-    }
+    constructor(reviewComment: ReviewComment) : this(
+        reviewComment.id,
+        reviewComment.content,
+        reviewComment.createdAt
+    );
 }

@@ -169,7 +169,7 @@ public class ReviewCommentControllerTest {
                 .andExpect(handler().methodName("updateReviewComment"))
                 .andExpect(status().isNoContent());
 
-        assertThat(reviewComment.getContent()).isEqualTo(request.content());
+        assertThat(reviewComment.getContent()).isEqualTo(request.getContent());
     }
 
     @Test

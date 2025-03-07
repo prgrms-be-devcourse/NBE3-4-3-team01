@@ -28,7 +28,7 @@ public class ReviewCommentController {
     ) {
         Member actor = rq.getActor();
 
-        reviewCommentService.createReviewComment(actor, reviewId, contentRequest.content());
+        reviewCommentService.createReviewComment(actor, reviewId, contentRequest.getContent());
     }
 
     @PutMapping("/{commentId}")
@@ -41,7 +41,7 @@ public class ReviewCommentController {
     ) {
         Member actor = rq.getActor();
 
-        reviewCommentService.updateReviewComment(actor, commentId, contentRequest.content());
+        reviewCommentService.updateReviewComment(actor, commentId, contentRequest.getContent());
     }
 
     @DeleteMapping("/{commentId}")

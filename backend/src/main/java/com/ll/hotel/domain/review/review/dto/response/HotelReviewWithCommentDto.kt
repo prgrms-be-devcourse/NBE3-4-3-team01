@@ -7,20 +7,24 @@ import com.ll.hotel.domain.review.review.entity.Review;
 
 import java.time.LocalDateTime;
 
-public record HotelReviewWithCommentDto(
-        String memberEmail,
-        String roomTypeName,
-        ReviewDto reviewDto,
-        ReviewCommentDto reviewCommentDto,
-        LocalDateTime createdAt
+data class HotelReviewWithCommentDto(
+    val memberEmail: String,
+    val roomTypeName: String,
+    val reviewDto: ReviewDto,
+    val reviewCommentDto: ReviewCommentDto?,
+    val createdAt: LocalDateTime
 ) {
-    public HotelReviewWithCommentDto(String memberEmail, String roomTypeName, Review review, ReviewComment reviewComment, LocalDateTime createdAt) {
-        this(
-                memberEmail,
-                roomTypeName,
-                new ReviewDto(review),
-                reviewComment != null ? new ReviewCommentDto(reviewComment) : null,
-                createdAt
-        );
-    }
+    constructor(
+        memberEmail: String,
+        roomTypeName: String,
+        review: Review,
+        reviewComment: ReviewComment?,
+        createdAt: LocalDateTime
+    ) : this(
+        memberEmail = memberEmail,
+        roomTypeName = roomTypeName,
+        reviewDto = ReviewDto(review),
+        reviewComment?.let { ReviewCommentDto(it) },
+        createdAt = createdAt
+    )
 }

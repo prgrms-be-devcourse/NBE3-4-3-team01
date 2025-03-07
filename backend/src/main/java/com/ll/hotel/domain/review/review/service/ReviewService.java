@@ -50,10 +50,10 @@ public class ReviewService {
 
     public PresignedUrlsResponse createReviewAndPresignedUrls(Long hotelId, Long roomId, Long memberId, Long bookingId,
                                                               PostReviewRequest postReviewRequest) {
-        long reviewId = createReview(hotelId, roomId, memberId, bookingId, postReviewRequest.content(), postReviewRequest.rating());
+        long reviewId = createReview(hotelId, roomId, memberId, bookingId, postReviewRequest.getContent(), postReviewRequest.getRating());
 
         List<String> extensions = Optional
-                .ofNullable(postReviewRequest.imageExtensions())
+                .of(postReviewRequest.getImageExtensions())
                 .orElse(Collections.emptyList());
 
         List<URL> urls = s3Service.generatePresignedUrls(ImageType.REVIEW, reviewId, extensions);
@@ -72,9 +72,9 @@ public class ReviewService {
 
     public PresignedUrlsResponse updateReview(Member actor, long reviewId, UpdateReviewRequest updateReviewRequest) {
 
-        updateReviewContentAndRating(actor, reviewId, updateReviewRequest.content(), updateReviewRequest.rating());
+        updateReviewContentAndRating(actor, reviewId, updateReviewRequest.getContent(), updateReviewRequest.getRating());
 
-        List<String> deleteImageUrls = Optional.ofNullable(updateReviewRequest.deleteImageUrls())
+        List<String> deleteImageUrls = Optional.of(updateReviewRequest.getDeleteImageUrls())
                 .orElse(Collections.emptyList());
 
         // DB 사진 삭제
@@ -84,7 +84,7 @@ public class ReviewService {
             s3Service.deleteObjectsByUrls(deleteImageUrls);
         }
 
-        List<String> extensions = Optional.ofNullable(updateReviewRequest.newImageExtensions())
+        List<String> extensions = Optional.of(updateReviewRequest.getNewImageExtensions())
                 .orElse(Collections.emptyList());
 
         // 새로운 사진의 Presigned URL 반환
@@ -185,7 +185,7 @@ public class ReviewService {
 
         return getReviewsWithImages(
                 myReviews,
-                myReview -> myReview.reviewDto().reviewId(),
+                myReview -> myReview.getReviewDto().getReviewId(),
                 MyReviewResponse::new,
                 pageable
         );
@@ -201,7 +201,7 @@ public class ReviewService {
 
         Page<HotelReviewResponse> hotelReviewPage = getReviewsWithImages(
                 hotelReviews,
-                hotelReview -> hotelReview.reviewDto().reviewId(),
+                hotelReview -> hotelReview.getReviewDto().getReviewId(),
                 HotelReviewResponse::new,
                 pageable
         );
