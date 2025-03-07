@@ -5,9 +5,10 @@ import jakarta.persistence.Entity
 import jakarta.persistence.ManyToMany
 
 @Entity
-class RoomOption(name: String): BaseOption(name) {
-    @ManyToMany(mappedBy = "roomOptions")
-    var rooms: MutableSet<Room> = mutableSetOf()
+class RoomOption(
+    name: String,
 
-    constructor(): this("DEFAULT_NAME")
-}
+    @ManyToMany(mappedBy = "roomOptions")
+    val rooms: MutableSet<Room> = mutableSetOf()
+
+): BaseOption(name)

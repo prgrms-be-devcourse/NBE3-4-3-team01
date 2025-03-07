@@ -1,6 +1,5 @@
 package com.ll.hotel.domain.hotel.option.entity
 
-import com.ll.hotel.domain.hotel.option.dto.response.OptionResponse
 import com.ll.hotel.global.jpa.entity.BaseEntity
 import jakarta.persistence.MappedSuperclass
 import jakarta.validation.constraints.NotBlank
