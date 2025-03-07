@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 interface RoomListProps {
   rooms: GetRoomResponse[];
   checkInDate?: string;
-  checkoutDate?: string;
+  checkOutDate?: string;
 }
 
 const RoomList: React.FC<RoomListProps> = ({ rooms }) => {
@@ -25,7 +25,7 @@ const RoomList: React.FC<RoomListProps> = ({ rooms }) => {
   const router = useRouter();
   const cookieHotelId = cookie?.hotelId ? Number(cookie.hotelId) : -1;
   const checkInDate = searchParams.get("checkInDate") || "";
-  const checkoutDate = searchParams.get("checkoutDate") || "";
+  const checkOutDate = searchParams.get("checkOutDate") || "";
 
   useEffect(() => {
     const parsedParamHotelId = param.hotelId ? Number(param.hotelId) : null;
@@ -72,7 +72,7 @@ const RoomList: React.FC<RoomListProps> = ({ rooms }) => {
     params.set("hotelId", (hotelId ?? "").toString());
     params.set("roomId", roomId.toString());
     if (checkInDate) params.set("checkInDate", checkInDate);
-    if (checkoutDate) params.set("checkOutDate", checkoutDate);
+    if (checkOutDate) params.set("checkOutDate", checkOutDate);
 
     console.log(
       "예약 페이지로 이동 URL : ",
@@ -86,12 +86,12 @@ const RoomList: React.FC<RoomListProps> = ({ rooms }) => {
     if (isBusinessUser) {
       if (paramHotelId !== cookieHotelId) {
         params.set("checkInDate", checkInDate);
-        params.set("checkoutDate", checkoutDate);
+        params.set("checkOutDate", checkOutDate);
       }
       router.push(`/hotels/${hotelId}/rooms/${roomId}?${params.toString()}`);
     } else {
       params.set("checkInDate", checkInDate);
-      params.set("checkoutDate", checkoutDate);
+      params.set("checkOutDate", checkOutDate);
       router.push(`/hotels/${hotelId}/rooms/${roomId}?${params.toString()}`);
     }
   };

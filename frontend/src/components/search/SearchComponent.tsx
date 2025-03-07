@@ -73,7 +73,7 @@ export default function SearchComponent({
     const searchParams = new URLSearchParams({
       streetAddress: streetAddress,
       checkInDate: selectedRange.start.toISOString().split("T")[0],
-      checkoutDate: selectedRange.end.toISOString().split("T")[0],
+      checkOutDate: selectedRange.end.toISOString().split("T")[0],
       personal: adults.toString(),
     });
 
