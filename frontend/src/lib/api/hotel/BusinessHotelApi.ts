@@ -95,7 +95,12 @@ export const findHotelDetailWithAvailableRooms = async (
   personal?: string
 ): Promise<GetHotelDetailResponse> => {
   try {
-    const response = await fetch(`${BASE_URL}/${hotelId}`);
+    const params = new URLSearchParams();
+    if (checkInDate) params.set("checkInDate", checkInDate);
+    if (checkoutDate) params.set("checkoutDate", checkoutDate);
+    if (personal) params.set("personal", personal);
+
+    const response = await fetch(`${BASE_URL}/${hotelId}?${params.toString()}`);
 
     const rsData = await response
       .clone()
