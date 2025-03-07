@@ -57,10 +57,7 @@ public class ReviewCommentControllerTest {
 
     ReviewComment setReviewComment(long reviewId) {
         Review review = reviewRepository.findById(reviewId).get();
-        return reviewCommentRepository.save(ReviewComment.builder()
-                .review(review)
-                .content("리뷰1에 대한 답변")
-                .build());
+        return reviewCommentRepository.save(new ReviewComment(review, "리뷰1에 대한 답변"));
     }
 
     @Test

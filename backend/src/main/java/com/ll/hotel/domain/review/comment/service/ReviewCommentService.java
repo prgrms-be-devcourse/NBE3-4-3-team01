@@ -25,10 +25,7 @@ public class ReviewCommentService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(ErrorCode.REVIEW_NOT_FOUND::throwServiceException);
 
-        ReviewComment reviewComment = ReviewComment.builder()
-                .review(review)
-                .content(content)
-                .build();
+        ReviewComment reviewComment = new ReviewComment(review, content);
 
         if(!review.getHotel().isOwnedBy(actor)) {
             ErrorCode.REVIEW_COMMENT_CREATION_FORBIDDEN.throwServiceException();
