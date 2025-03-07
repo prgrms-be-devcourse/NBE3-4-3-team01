@@ -10,28 +10,26 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "images", indexes = @Index(name = "idx_reference", columnList = "referenceId, imageType"))
-@EntityListeners(AuditingEntityListener.class)
-class Image : BaseEntity {
+@Table(
+    name = "images",
+    indexes = [
+        Index(name = "idx_reference", columnList = "referenceId, imageType")
+    ]
+)
+@EntityListeners(AuditingEntityListener::class)
+class Image(
+    @Column(nullable = false)
+    var imageUrl: String,
 
     @Column(nullable = false)
-    private String imageUrl;
-
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private Long referenceId;
+    var referenceId: Long = 0L,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ImageType imageType;
-
-    @Builder
-    private Image(String imageUrl, Long referenceId, ImageType imageType) {
-        this.imageUrl = imageUrl;
-        this.referenceId = referenceId;
-        this.imageType = imageType;
-    }
+    var imageType: ImageType
+) : BaseEntity() {
+    @CreatedDate
+    @Column(nullable = false)
+    lateinit var createdAt: LocalDateTime
 }
+

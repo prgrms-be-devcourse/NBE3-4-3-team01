@@ -1,42 +1,36 @@
 package com.ll.hotel.domain.image.service;
 
-import com.ll.hotel.domain.image.converter.ImageConverter;
 import com.ll.hotel.domain.image.entity.Image;
 import com.ll.hotel.domain.image.repository.ImageRepository;
 import com.ll.hotel.domain.image.type.ImageType;
 import com.ll.hotel.standard.util.Ut;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-@RequiredArgsConstructor
 @Transactional
-public class ImageService {
-
-    private final ImageRepository imageRepository;
-
-    public void saveImages(ImageType imageType, long id, List<String> imageUrls) {
-        List<Image> images = imageUrls.stream()
-                .map(imageUrl -> ImageConverter.toImage(imageType, id, imageUrl))
-                .toList();
+class ImageService(
+    private val imageRepository: ImageRepository
+) {
+    fun saveImages(imageType: ImageType, id: Long, imageUrls: List<String>) {
+        val images: List<Image> = imageUrls.stream()
+            .map { Image(it, id, imageType) }
+            .toList();
 
         imageRepository.saveAll(images);
     }
 
-    public void deleteImagesByIdAndUrls(ImageType imageType, long id, List<String> urls) {
-        if(Ut.list.hasValue(urls)) {
+    fun deleteImagesByIdAndUrls(imageType: ImageType, id: Long, urls: List<String>) {
+        if (Ut.list.hasValue(urls)) {
             imageRepository.deleteByReferenceIdAndImageUrls(imageType, id, urls);
         }
     }
 
-    public long deleteImages(ImageType imageType, long id) {
+    fun deleteImages(imageType: ImageType, id: Long): Long {
         return imageRepository.deleteByImageTypeAndReferenceId(imageType, id);
     }
 
-    public List<Image> findImagesById(ImageType imageType, long id) {
+    fun findImagesById(imageType: ImageType, id: Long): List<Image> {
         return imageRepository.findByImageTypeAndReferenceId(imageType, id);
     }
 }
