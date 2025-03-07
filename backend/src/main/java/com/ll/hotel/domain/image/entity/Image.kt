@@ -11,10 +11,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "images", indexes = @Index(name = "idx_reference", columnList = "referenceId, imageType"))
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class Image extends BaseEntity {
+class Image : BaseEntity {
 
     @Column(nullable = false)
     private String imageUrl;

@@ -40,7 +40,7 @@ class ResponseAspect(private val response: HttpServletResponse) {
             """
     )
     @Throws(Throwable::class)
-    fun handleResponse(joinPoint: ProceedingJoinPoint): Any {
+    fun handleResponse(joinPoint: ProceedingJoinPoint): Any? {
         val className = joinPoint.signature.declaringType.simpleName
         val methodName = joinPoint.signature.name
 
