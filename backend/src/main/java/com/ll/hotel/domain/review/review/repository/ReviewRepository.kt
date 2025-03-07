@@ -10,13 +10,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 
 @Repository
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+interface ReviewRepository : JpaRepository<Review, Long> {
 
     // 멤버 ID로 리뷰 목록 조회
-    @Query("""  
+    @Query(
+        """  
         SELECT new com.ll.hotel.domain.review.review.dto.response.MyReviewWithCommentDto(
             h.hotelName,
             r.roomName,
@@ -30,11 +30,16 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         JOIN rv.booking b
         LEFT JOIN ReviewComment rc ON rc.review = rv
         WHERE rv.member.id = :memberId
-    """)
-    Page<MyReviewWithCommentDto> findReviewsWithCommentByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+    """
+    )
+    fun findReviewsWithCommentByMemberId(
+        @Param("memberId") memberId: Long,
+        pageable: Pageable
+    ): Page<MyReviewWithCommentDto>
 
     // 호텔 ID로 리뷰 목록 조회
-    @Query("""  
+    @Query(
+        """  
         SELECT new com.ll.hotel.domain.review.review.dto.response.HotelReviewWithCommentDto(
             m.memberEmail,
             r.roomName,
@@ -49,23 +54,31 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         JOIN rv.member m
         LEFT JOIN ReviewComment rc ON rc.review = rv
         WHERE h.id = :hotelId
-    """)
-    Page<HotelReviewWithCommentDto> findReviewsWithCommentByHotelId(@Param("hotelId") Long hotelId, Pageable pageable);
+    """
+    )
+    fun findReviewsWithCommentByHotelId(
+        @Param("hotelId") hotelId: Long,
+        pageable: Pageable
+    ): Page<HotelReviewWithCommentDto>
 
-    @Query("""
+    @Query(
+        """
         SELECT rv
         FROM Review rv
         WHERE rv.member.id = :memberId
         ORDER BY rv.id DESC
-    """)
-    List<Review> findByMemberId(@Param("memberId") Long memberId);
+    """
+    )
+    fun findByMemberId(@Param("memberId") memberId: Long): List<Review>
 
-    @Query("""
+    @Query(
+        """
         SELECT rv
         FROM Review rv
         WHERE rv.hotel.id = :hotelId
         ORDER BY rv.id DESC
-    """)
-    List<Review> findByHotelId(@Param("hotelId") Long hotelId);
+    """
+    )
+    fun findByHotelId(@Param("hotelId") hotelId: Long): List<Review>
 }
 
