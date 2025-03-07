@@ -53,14 +53,10 @@
         </appender>
     </springProfile>
 
-    <!-- INFO 로거 -->
-    <logger name="com.ll.hotel.global" level="INFO" additivity="false">
+    <!-- INFO, ERROR 로거 -->
+    <!-- 추후 변동 가능 -->
+    <logger name="com.ll.hotel.global.aspect" level="INFO" additivity="false">
         <appender-ref ref="LOG_FILE"/>
-        <appender-ref ref="CONSOLE"/>
-    </logger>
-
-    <!-- ERROR 로거 -->
-    <logger name="com.ll.hotel.global.aspect.GlobalExceptionLoggingAspect" level="ERROR" additivity="false">
         <appender-ref ref="ERROR_LOG_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>

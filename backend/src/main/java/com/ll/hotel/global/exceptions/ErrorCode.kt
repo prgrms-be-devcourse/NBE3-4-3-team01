@@ -1,16 +1,10 @@
-package com.ll.hotel.global.exceptions;
+package com.ll.hotel.global.exceptions
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import software.amazon.awssdk.services.s3.model.S3Exception;
+import org.springframework.http.HttpStatus
+import software.amazon.awssdk.services.s3.model.S3Exception
+import java.lang.reflect.InvocationTargetException
 
-@Getter
-@AllArgsConstructor
-@Slf4j
-public enum ErrorCode {
-
+enum class ErrorCode(val httpStatus: HttpStatus, val message: String) {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다."),
 
@@ -108,19 +102,15 @@ public enum ErrorCode {
     INVALID_CHECK_IN_OUT_DATE(HttpStatus.BAD_REQUEST, "체크인 날짜는 체크아웃 날짜보다 늦을 수 없습니다."),
     INVALID_FILTER_DIRECTION(HttpStatus.BAD_REQUEST, "정렬 방향은 ASC 또는 DESC만 가능합니다.");
 
-
-    private final HttpStatus httpStatus;
-    private final String message;
-
-    public ServiceException throwServiceException() {
-        throw new ServiceException(httpStatus, message);
+    fun throwServiceException(): ServiceException {
+        throw ServiceException(httpStatus, message)
     }
 
-    public ServiceException throwServiceException(Throwable cause) {
-        throw new ServiceException(httpStatus, message, cause);
+    fun throwServiceException(cause: Throwable): ServiceException {
+        throw ServiceException(httpStatus, message, cause)
     }
 
-    public S3Exception throwS3Exception(Throwable cause) {
-        throw new CustomS3Exception(httpStatus, message, cause);
+    fun throwS3Exception(cause: Throwable): S3Exception {
+        throw CustomS3Exception(httpStatus, message, cause)
     }
 }
