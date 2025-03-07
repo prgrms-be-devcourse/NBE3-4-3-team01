@@ -199,24 +199,9 @@ public class TestInit {
                 .build());
 
 
-        Booking booking = Booking.builder()
-                .room(room)
-                .hotel(hotel)
-                .member(customer) // Using memberId = 1
-                .payment(payment)
-                .checkInDate(checkIn)
-                .checkOutDate(checkOut)
-                .build();
-
-        // 2번째 예약
-        Booking booking2 = Booking.builder()
-                .room(room)
-                .hotel(hotel)
-                .member(customer) // Using memberId = 1
-                .payment(payment2)
-                .checkInDate(checkIn)
-                .checkOutDate(checkOut)
-                .build();
+        // 예약 생성 및 저장
+        Booking booking = new Booking(room, hotel, customer, payment, checkIn, checkOut);
+        Booking booking2 = new Booking(room, hotel, customer, payment2, checkIn, checkOut);
 
         bookingRepository.save(booking);
         bookingRepository.save(booking2);

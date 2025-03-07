@@ -45,24 +45,19 @@ public class BookingService {
     @Transactional
     public void create(Member member, BookingRequest bookingRequest) {
         try {
+            // Request로부터 관련 데이터 추출
             Room room = roomRepository.findById(bookingRequest.roomId())
                     .orElseThrow(ErrorCode.ROOM_NOT_FOUND::throwServiceException);
             Hotel hotel = hotelRepository.findById(bookingRequest.hotelId())
                     .orElseThrow(ErrorCode.HOTEL_NOT_FOUND::throwServiceException);
             Payment payment = paymentService.create(bookingRequest);
 
-            // Booking 생성, 리팩터링 예정
-            Booking booking = Booking.builder()
-                    .room(room)
-                    .hotel(hotel)
-                    .member(member)
-                    .payment(payment)
-                    .checkInDate(bookingRequest.checkInDate())
-                    .checkOutDate(bookingRequest.checkOutDate())
-                    .build();
-
+            // 예약 데이터 생성
+            Booking booking = new Booking(room, hotel, member, payment, bookingRequest.checkInDate(), bookingRequest.checkOutDate());
             booking = bookingRepository.save(booking);
-            booking.setBookingNumber(String.format("B%08d", booking.getId())); // ID 기반으로 예약 번호 생성, 리팩터링 예정
+            booking.setBookingNumber(String.format("B%08d", booking.getId())); // ID 기반으로 예약 ID 생성
+
+            // 예약 데이터 저장
             bookingRepository.save(booking);
         } catch (ServiceException e) {
             throw e;
