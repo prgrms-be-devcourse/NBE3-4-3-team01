@@ -13,7 +13,7 @@ interface PageProps {
     filterName?: FilterName;
     streetAddress?: SeoulDistrict;
     checkInDate?: string;
-    checkoutDate?: string;
+    checkOutDate?: string;
     personal?: string;
     filterDirection?: FilterDirection;
   };
@@ -28,8 +28,8 @@ export default async function HotelsPage({ searchParams }: PageProps) {
     filterName: params.filterName ?? FilterName.LATEST,
     streetAddress: params.streetAddress ?? "",
     checkInDate: params.checkInDate ?? new Date().toISOString().split("T")[0],
-    checkoutDate:
-      params.checkoutDate ??
+    checkOutDate:
+      params.checkOutDate ??
       new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     personal: params.personal ?? "2",
     filterDirection: params.filterDirection ?? FilterDirection.DESC,
@@ -41,7 +41,7 @@ export default async function HotelsPage({ searchParams }: PageProps) {
     searchParamsWithDefaults.filterName,
     searchParamsWithDefaults.streetAddress,
     searchParamsWithDefaults.checkInDate,
-    searchParamsWithDefaults.checkoutDate,
+    searchParamsWithDefaults.checkOutDate,
     parseInt(searchParamsWithDefaults.personal),
     searchParamsWithDefaults.filterDirection
   );

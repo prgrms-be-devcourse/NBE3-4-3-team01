@@ -19,7 +19,7 @@ const RoomDetailPage: React.FC = () => {
   const roomId = params.roomId;
   const searchParams = useSearchParams();
   const checkInDate = searchParams.get("checkInDate") || "";
-  const checkoutDate = searchParams.get("checkoutDate") || "";
+  const checkOutDate = searchParams.get("checkOutDate") || "";
 
   useEffect(() => {
     const fetchRoomDetail = async () => {
@@ -55,7 +55,7 @@ const RoomDetailPage: React.FC = () => {
           <RoomDetail
             room={roomDetail}
             checkInDate={checkInDate}
-            checkoutDate={checkoutDate}
+            checkOutDate={checkOutDate}
           />
         </CardContent>
       </Card>

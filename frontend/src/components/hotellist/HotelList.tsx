@@ -4,14 +4,14 @@ import { GetHotelResponse } from "@/lib/types/hotel/GetHotelResponse";
 interface HotelListProps {
   hotels: GetHotelResponse[];
   checkInDate: string;
-  checkoutDate: string;
+  checkOutDate: string;
   personal: string;
 }
 
 export default function HotelList({
   hotels,
   checkInDate,
-  checkoutDate,
+  checkOutDate,
   personal,
 }: HotelListProps) {
   return (
@@ -21,7 +21,7 @@ export default function HotelList({
           key={hotel.hotelId}
           {...hotel}
           checkInDate={checkInDate}
-          checkoutDate={checkoutDate}
+          checkOutDate={checkOutDate}
           personal={personal}
         />
       ))}
