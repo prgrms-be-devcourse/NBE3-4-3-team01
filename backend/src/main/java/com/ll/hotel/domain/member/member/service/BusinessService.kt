@@ -22,7 +22,6 @@ class BusinessService(
     ): BusinessResponse.ApprovalResult {
 
         businessValidationService.validateBusiness(registrationInfo)
-        member.role = Role.BUSINESS
 
         val business = Business(
             businessRegistrationNumber = registrationInfo.businessRegistrationNumber,
@@ -31,6 +30,9 @@ class BusinessService(
             approvalStatus = BusinessApprovalStatus.APPROVED,
             member = member
         )
+
+        member.role = Role.BUSINESS
+        member.business = business
 
         val savedBusiness = businessRepository.save(business)
 
