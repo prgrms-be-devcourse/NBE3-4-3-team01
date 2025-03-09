@@ -14,7 +14,6 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -38,19 +37,19 @@ class HotelOptionControllerTest (
     @Test
     @DisplayName("호텔 옵션 추가")
     fun `should add a new hotel option`() {
-        val resultActions: ResultActions = mockMvc.perform(
-            post("/api/admin/hotel-options")
-                .content(
-                    """
-                    {
-                        "name": "추가 테스트"
-                    }
-                    """.trimIndent()
-                )
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andDo(print())
 
-        resultActions
+        val requestBody = """
+                {
+                    "name": "추가 테스트"
+                }
+                """.trimIndent()
+
+        mockMvc.perform(
+            post("/api/admin/hotel-options")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody)
+        )
+            .andDo(print())
             .andExpect(handler().handlerType(HotelOptionController::class.java))
             .andExpect(handler().methodName("add"))
             .andExpect(status().isCreated)
@@ -60,11 +59,11 @@ class HotelOptionControllerTest (
     @Test
     @DisplayName("호텔 옵션 전체 조회")
     fun `should get all hotel options`() {
-        val resultActions: ResultActions = mockMvc.perform(
-            get("/api/admin/hotel-options")
-        ).andDo(print())
 
-        resultActions
+        mockMvc.perform(
+            get("/api/admin/hotel-options")
+        )
+            .andDo(print())
             .andExpect(handler().handlerType(HotelOptionController::class.java))
             .andExpect(handler().methodName("getAll"))
             .andExpect(status().isOk)
@@ -74,19 +73,20 @@ class HotelOptionControllerTest (
     @Test
     @DisplayName("호텔 옵션 수정")
     fun `should modify a hotel option`() {
-        val resultActions: ResultActions = mockMvc.perform(
-            patch("/api/admin/hotel-options/{id}", testId)
-                .content(
-                    """
-                    {
-                        "name": "수정됨"
-                    }
-                    """.trimIndent()
-                )
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andDo(print())
 
-        resultActions
+        val requestBody = """
+                {
+                    "name": "수정됨"
+                }
+                """.trimIndent()
+
+
+        mockMvc.perform(
+            patch("/api/admin/hotel-options/{id}", testId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody)
+        )
+            .andDo(print())
             .andExpect(handler().handlerType(HotelOptionController::class.java))
             .andExpect(handler().methodName("modify"))
             .andExpect(status().isOk)
@@ -96,11 +96,10 @@ class HotelOptionControllerTest (
     @Test
     @DisplayName("호텔 옵션 삭제")
     fun `should delete a hotel option`() {
-        val resultActions: ResultActions = mockMvc.perform(
+        mockMvc.perform(
             delete("/api/admin/hotel-options/{id}", testId)
-        ).andDo(print())
-
-        resultActions
+        )
+            .andDo(print())
             .andExpect(handler().handlerType(HotelOptionController::class.java))
             .andExpect(handler().methodName("delete"))
             .andExpect(status().isNoContent)
