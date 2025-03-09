@@ -2,7 +2,6 @@ package com.ll.hotel.domain.hotel.option.service
 
 import com.ll.hotel.domain.hotel.option.dto.request.OptionRequest
 import com.ll.hotel.domain.hotel.option.dto.response.OptionResponse
-import com.ll.hotel.domain.hotel.option.entity.HotelOption
 import com.ll.hotel.domain.hotel.option.entity.RoomOption
 import com.ll.hotel.domain.hotel.option.repository.RoomOptionRepository
 import com.ll.hotel.global.exceptions.ErrorCode
