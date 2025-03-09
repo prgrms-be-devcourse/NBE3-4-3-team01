@@ -7,7 +7,6 @@ import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.domain.member.member.entity.Role
 import com.ll.hotel.domain.member.member.repository.BusinessRepository
 import com.ll.hotel.domain.member.member.type.BusinessApprovalStatus
-import com.ll.hotel.global.exceptions.ErrorCode
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -21,13 +20,9 @@ class BusinessService(
         registrationInfo: BusinessRequest.RegistrationInfo,
         member: Member
     ): BusinessResponse.ApprovalResult {
-        val validationResult = businessValidationService.validateBusiness(registrationInfo)
 
-        if (validationResult == "01") {
-            member.role = Role.BUSINESS
-        } else {
-            ErrorCode.INVALID_BUSINESS_INFO.throwServiceException()
-        }
+        businessValidationService.validateBusiness(registrationInfo)
+        member.role = Role.BUSINESS
 
         val business = Business(
             businessRegistrationNumber = registrationInfo.businessRegistrationNumber,
