@@ -222,25 +222,11 @@ public class TestInit {
         bookingRepository.save(booking2);
 
         Review review = reviewRepository.save(
-           Review.builder()
-                   .booking(booking)
-                   .hotel(hotel)
-                   .room(room)
-                   .member(customer)
-                   .rating(4)
-                   .content("리뷰 1 생성합니다.")
-                   .build()
+                new Review(hotel, room, booking, customer, "리뷰 1 생성합니다.", 4)
         );
 
         Review review2 = reviewRepository.save(
-                Review.builder()
-                        .booking(booking2)
-                        .hotel(hotel)
-                        .room(room)
-                        .member(customer)
-                        .rating(5)
-                        .content("리뷰 2 생성합니다.")
-                        .build()
+                new Review(hotel, room, booking2, customer, "리뷰 2 생성합니다.", 5)
         );
 
         List<String> imageUrls = List.of(

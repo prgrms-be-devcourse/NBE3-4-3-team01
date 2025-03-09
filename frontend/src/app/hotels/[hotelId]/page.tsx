@@ -18,17 +18,17 @@ const HotelDetailPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const checkInDate = searchParams.get("checkInDate") || "";
-  const checkoutDate = searchParams.get("checkoutDate") || "";
+  const checkOutDate = searchParams.get("checkOutDate") || "";
   const personal = searchParams.get("personal") || "";
 
   useEffect(() => {
-    console.log("체크인 - 체크아웃 : ", checkInDate, checkoutDate);
+    console.log("체크인 - 체크아웃 : ", checkInDate, checkOutDate);
     const fetchHotelDetail = async () => {
       try {
         const response = await findHotelDetailWithAvailableRooms(
           Number(hotelId),
           checkInDate,
-          checkoutDate,
+          checkOutDate,
           personal
         );
         setHotelDetail(response);
@@ -67,7 +67,7 @@ const HotelDetailPage: React.FC = () => {
           <RoomList
             rooms={hotelDetail.hotelDetailDto.rooms}
             checkInDate={checkInDate}
-            checkoutDate={checkoutDate}
+            checkOutDate={checkOutDate}
           />
         </CardContent>
       </Card>

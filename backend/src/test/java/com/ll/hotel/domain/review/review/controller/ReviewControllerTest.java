@@ -86,7 +86,7 @@ public class ReviewControllerTest {
                 .andExpect(handler().methodName("createReview"))
                 .andExpect(status().isCreated()) // TODO : isCreated() 로 변경 필요
                 .andExpect(jsonPath("$.data.presignedUrls").isArray())
-                .andExpect(jsonPath("$.data.presignedUrls.size()").value(postReviewRequest.imageExtensions().size()))
+                .andExpect(jsonPath("$.data.presignedUrls.size()").value(postReviewRequest.getImageExtensions().size()))
                 .andExpect(jsonPath("$.data.reviewId").exists());
     }
 
@@ -328,12 +328,12 @@ public class ReviewControllerTest {
                 .andExpect(handler().handlerType(ReviewController.class))
                 .andExpect(handler().methodName("updateReview"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.presignedUrls.size()").value(updateReviewRequest.newImageExtensions().size()));
+                .andExpect(jsonPath("$.data.presignedUrls.size()").value(updateReviewRequest.getNewImageExtensions().size()));
 
         // 수정된 리뷰 내용
-        assertThat(updateReviewRequest.content()).isEqualTo(review.getContent());
-        assertThat(updateReviewRequest.rating()).isEqualTo(review.getRating());
-        assertThat(afterImages).hasSize(beforeImages.size() - updateReviewRequest.deleteImageUrls().size());
+        assertThat(updateReviewRequest.getContent()).isEqualTo(review.getContent());
+        assertThat(updateReviewRequest.getRating()).isEqualTo(review.getRating());
+        assertThat(afterImages).hasSize(beforeImages.size() - updateReviewRequest.getDeleteImageUrls().size());
     }
 
     @Test

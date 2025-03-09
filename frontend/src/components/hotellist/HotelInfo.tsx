@@ -8,7 +8,7 @@ import { Clock } from "lucide-react";
 
 interface HotelInfoProps extends GetHotelResponse {
   checkInDate: string;
-  checkoutDate: string;
+  checkOutDate: string;
   personal: string;
 }
 
@@ -23,7 +23,7 @@ export default function HotelInfo({
   checkInTime,
   price,
   checkInDate,
-  checkoutDate,
+  checkOutDate,
   personal,
 }: HotelInfoProps) {
   const router = useRouter();
@@ -31,7 +31,7 @@ export default function HotelInfo({
   const handleClick = () => {
     const params = new URLSearchParams();
     params.set("checkInDate", checkInDate);
-    params.set("checkoutDate", checkoutDate);
+    params.set("checkOutDate", checkOutDate);
     params.set("personal", personal);
     router.push(`/hotels/${hotelId}?${params.toString()}`);
   };
