@@ -39,5 +39,4 @@ data class PostHotelRequest(
     val imageExtensions : List<String> = emptyList(),
 
     val hotelOptions: Set<String> = emptySet()
-) {
-}
+)

@@ -15,7 +15,7 @@ data class PostHotelResponse(
 
     val createdAt: LocalDateTime,
 
-    val urlResponse: PresignedUrlsResponse?
+    val urlResponse: PresignedUrlsResponse
 ) {
     constructor(hotel: Hotel, response: PresignedUrlsResponse) : this(
         hotel.business.id,

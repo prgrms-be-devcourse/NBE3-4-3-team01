@@ -72,7 +72,7 @@ class Hotel(
     }
 
     fun isOwnedBy(member: Member): Boolean {
-        return this.business?.member == member
+        return this.business.member == member
     }
 
     companion object {
