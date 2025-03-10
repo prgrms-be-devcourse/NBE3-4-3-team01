@@ -3,17 +3,21 @@ package com.ll.hotel.domain.member.member.service
 import com.ll.hotel.domain.member.member.dto.request.BusinessRequest
 import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.domain.member.member.entity.Role
+import com.ll.hotel.domain.member.member.repository.BusinessRepository
 import com.ll.hotel.domain.member.member.repository.MemberRepository
 import com.ll.hotel.domain.member.member.type.BusinessApprovalStatus
 import com.ll.hotel.domain.member.member.type.MemberStatus
 import com.ll.hotel.global.exceptions.ErrorCode
 import com.ll.hotel.global.exceptions.ServiceException
 import io.mockk.*
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -22,16 +26,22 @@ import java.time.LocalDate
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class BusinessServiceTest (
-    private val businessService: BusinessService,
+class BusinessServiceTest @Autowired constructor(
     private val memberRepository: MemberRepository,
+    private val businessRepository: BusinessRepository
 ) {
-    private val businessValidationService = mockk<BusinessValidationService>()
     private var testId: Long = 0L
+
+    @MockK
+    private lateinit var businessValidationService: BusinessValidationService
+
+    @InjectMockKs
+    private lateinit var businessService: BusinessService
 
     @BeforeEach
     fun setUp() {
-        memberRepository.deleteAll()
+        MockKAnnotations.init(this, relaxUnitFun = true)
+        clearAllMocks()
 
         testId = memberRepository.save(
             Member(
@@ -87,7 +97,7 @@ class BusinessServiceTest (
         }
 
         // Then
-        assertThat(exception.resultCode).isEqualTo(ErrorCode.INVALID_BUSINESS_INFO)
+        assertThat(exception.resultCode).isEqualTo(ErrorCode.INVALID_BUSINESS_INFO.httpStatus)
 
         verify { businessValidationService.validateBusiness(businessRequest) }
     }
