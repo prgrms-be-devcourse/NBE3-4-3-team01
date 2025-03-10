@@ -97,11 +97,20 @@ class RefreshTokenService(
                     REFRESH_TOKEN_NOT_FOUND.throwServiceException() 
                 }
 
-            val email = resultToken.id
+            val email = resultToken.id!!
             log.debug("토큰에서 이메일 찾음: {}", email)
             
-            val role = Ut.Jwt.getClaims(jwtProperties, token).get("role", String::class.java)
-            val newAccessToken = Ut.Jwt.toString(jwtProperties, mapOf("sub" to email, "role" to role))
+            // 명시적으로 MutableMap 생성
+            val claims: MutableMap<String, Any> = HashMap()
+            claims["sub"] = email
+            
+            // role 값 안전하게 추가 (Any 타입으로 명시적 캐스팅)
+            val roleFromToken: Any = Ut.Jwt.getClaims(jwtProperties, token).get("role", String::class.java) ?: "ROLE_USER"
+            claims["role"] = roleFromToken
+            claims["type"] = "access"
+            
+            // 액세스 토큰 생성
+            val newAccessToken = Ut.Jwt.toString(jwtProperties, claims)
 
             resultToken.updateAccessToken(newAccessToken)
             repository.save(resultToken)
