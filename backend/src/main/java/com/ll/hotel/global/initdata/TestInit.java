@@ -184,39 +184,17 @@ public class TestInit {
                 price,
                 paidAtTimestamp
         );
-        PaymentRequest paymentRequest = PaymentRequest.from(bookingRequest);
-        PaymentRequest paymentRequest2 = PaymentRequest.from(bookingRequest2);
 
-        Payment payment = paymentRepository.save(Payment.builder()
-                .merchantUid(paymentRequest.merchantUid())
-                .amount(price)
-                .paidAt(LocalDateTime.ofInstant(Instant.ofEpochSecond(paymentRequest.paidAtTimestamp()), ZoneId.systemDefault()))
-                .build());
-        Payment payment2 = paymentRepository.save(Payment.builder()
-                .merchantUid(paymentRequest2.merchantUid())
-                .amount(price)
-                .paidAt(LocalDateTime.ofInstant(Instant.ofEpochSecond(paymentRequest2.paidAtTimestamp()), ZoneId.systemDefault()))
-                .build());
+        // 결제 생성 및 저장
+        Payment payment = new Payment("uid1001", price, LocalDateTime.ofInstant(Instant.ofEpochSecond(paidAtTimestamp), ZoneId.systemDefault()));
+        Payment payment2 = new Payment("uid1002", price, LocalDateTime.ofInstant(Instant.ofEpochSecond(paidAtTimestamp), ZoneId.systemDefault()));
 
+        paymentRepository.save(payment);
+        paymentRepository.save(payment2);
 
-        Booking booking = Booking.builder()
-                .room(room)
-                .hotel(hotel)
-                .member(customer) // Using memberId = 1
-                .payment(payment)
-                .checkInDate(checkIn)
-                .checkOutDate(checkOut)
-                .build();
-
-        // 2번째 예약
-        Booking booking2 = Booking.builder()
-                .room(room)
-                .hotel(hotel)
-                .member(customer) // Using memberId = 1
-                .payment(payment2)
-                .checkInDate(checkIn)
-                .checkOutDate(checkOut)
-                .build();
+        // 예약 생성 및 저장
+        Booking booking = new Booking(room, hotel, customer, payment, checkIn, checkOut);
+        Booking booking2 = new Booking(room, hotel, customer, payment2, checkIn, checkOut);
 
         bookingRepository.save(booking);
         bookingRepository.save(booking2);
