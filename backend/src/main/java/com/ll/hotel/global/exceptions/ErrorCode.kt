@@ -28,6 +28,12 @@ enum class ErrorCode(val httpStatus: HttpStatus, val message: String) {
     OAUTH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 OAuth 정보를 찾을 수 없습니다."),
     OAUTH_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "OAuth 로그인에 실패했습니다."),
 
+    // SMS
+    SMS_SEND_FAILED(HttpStatus.BAD_REQUEST, "SMS 발송 중 오류가 발생했습니다."),
+    SMS_VERIFY_FAILED(HttpStatus.BAD_REQUEST, "SMS 인증 중 오류가 발생했습니다."),
+    SMS_PHONE_NUMBER_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "해당 휴대폰 번호로는 더 이상 가입할 수 없습니다."),
+    SMS_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "인증번호가 일치하지 않거나 만료되었습니다."),
+
     // favorite
     FAVORITE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 즐겨찾기에 추가된 호텔입니다."),
     FAVORITE_NOT_FOUND(HttpStatus.BAD_REQUEST, "즐겨찾기에 없는 호텔입니다."),
