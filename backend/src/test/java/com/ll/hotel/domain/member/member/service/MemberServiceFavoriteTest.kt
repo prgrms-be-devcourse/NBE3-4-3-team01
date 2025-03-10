@@ -84,7 +84,7 @@ class MemberServiceFavoriteTest {
         hotelRepository.save(testHotel)
         
         // Rq 모킹 설정
-        Mockito.`when`(rq.actor).thenReturn(testMember)
+        Mockito.`when`(rq.getActor()).thenReturn(testMember)
     }
     
     @Test
@@ -103,7 +103,7 @@ class MemberServiceFavoriteTest {
     @DisplayName("즐겨찾기 추가 실패 - 로그인하지 않은 경우")
     fun addFavorite_Fail_NotLoggedIn() {
         // 로그인하지 않은 상태 모킹
-        Mockito.`when`(rq.actor).thenReturn(null)
+        Mockito.`when`(rq.getActor()).thenReturn(null)
         
         // when & then
         assertThatThrownBy { memberService.addFavorite(testHotel.id) }
