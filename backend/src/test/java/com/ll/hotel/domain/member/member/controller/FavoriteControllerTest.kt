@@ -63,14 +63,14 @@ class FavoriteControllerTest {
         ReflectionTestUtils.setField(memberService, "rq", rq)
         
         // 테스트 데이터 초기화
-        testMember = Member.builder()
-                .memberEmail("test@example.com")
-                .memberName("테스트회원")
-                .memberPhoneNumber("010-1234-5678")
-                .role(Role.USER)
-                .memberStatus(MemberStatus.ACTIVE)
-                .favoriteHotels(HashSet())
-                .build()
+        testMember = Member(
+            memberEmail = "test@example.com",
+            memberName = "테스트회원",
+            memberPhoneNumber = "010-1234-5678",
+            role = Role.USER,
+            memberStatus = MemberStatus.ACTIVE,
+            favoriteHotels = HashSet()
+        )
         
         memberRepository.save(testMember)
         
