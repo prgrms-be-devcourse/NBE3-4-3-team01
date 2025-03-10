@@ -75,7 +75,7 @@ class FavoriteControllerTest {
         memberRepository.save(testMember)
         
         // Rq 모킹 설정
-        Mockito.`when`(rq.actor).thenReturn(testMember)
+        Mockito.`when`(rq.getActor()).thenReturn(testMember)
         
         // 테스트 호텔 설정
         testHotel1 = Hotel.builder()
