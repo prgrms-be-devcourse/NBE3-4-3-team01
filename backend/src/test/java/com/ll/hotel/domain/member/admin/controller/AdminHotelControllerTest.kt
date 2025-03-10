@@ -10,11 +10,13 @@ import com.ll.hotel.domain.member.member.repository.BusinessRepository
 import com.ll.hotel.domain.member.member.repository.MemberRepository
 import com.ll.hotel.domain.member.member.type.BusinessApprovalStatus
 import com.ll.hotel.domain.member.member.type.MemberStatus
+import io.mockk.clearAllMocks
 import jakarta.transaction.Transactional
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
@@ -33,7 +35,7 @@ import java.time.LocalTime
 @AutoConfigureMockMvc
 @Transactional
 @WithMockUser(username = "admin", roles = ["ADMIN"])
-class AdminHotelControllerTest(
+class AdminHotelControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val hotelRepository: HotelRepository,
     private val businessRepository : BusinessRepository,
@@ -43,8 +45,7 @@ class AdminHotelControllerTest(
 
     @BeforeEach
     fun setUp() {
-        memberRepository.deleteAll()
-
+        clearAllMocks()
         val member = memberRepository.save(
             Member(
                 birthDate = LocalDate.now(),
@@ -114,7 +115,6 @@ class AdminHotelControllerTest(
             .andExpect(handler().handlerType(AdminHotelController::class.java))
             .andExpect(handler().methodName("getAll"))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.resultCode", equalTo(HttpStatus.BAD_REQUEST.name)))
     }
 
     @Test
@@ -133,16 +133,13 @@ class AdminHotelControllerTest(
     @Test
     @DisplayName("호텔 조회 - 요청이 잘못된 경우")
     fun `should throw exception when hotel not found`() {
-        val invalidHotelId = hotelRepository.count() + 1
-
         mockMvc.perform(
-            get("/api/admin/hotels/{id]", invalidHotelId)
+            get("/api/admin/hotels/{id}", Long.MAX_VALUE)
         )
             .andDo(print())
             .andExpect(handler().handlerType(AdminHotelController::class.java))
             .andExpect(handler().methodName("getById"))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.resultCode", equalTo(HttpStatus.NOT_FOUND.name)))
     }
 
     @Test

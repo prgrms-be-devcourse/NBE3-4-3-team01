@@ -10,17 +10,20 @@ import org.springframework.web.context.annotation.RequestScope
 
 @Component
 @RequestScope
-class Rq(private val memberRepository: MemberRepository) {
+class Rq(
+    private val memberRepository: MemberRepository
+) {
     private var actor: Member? = null
 
     fun getActor(): Member {
         if (actor == null) {
             actor = SecurityContextHolder.getContext().authentication
-                ?.let { it.principal as? SecurityUser }
-                ?.let { securityUser -> memberRepository.findByMemberEmail(securityUser.email) }
-                ?.orElseThrow { ErrorCode.UNAUTHORIZED.throwServiceException() }
+                ?.takeIf { it.principal is SecurityUser }
+                ?.principal
+                ?.let { it as SecurityUser }
+                ?.let { memberRepository.findByMemberEmail(it.email).orElse(null) }
+                ?: throw ErrorCode.UNAUTHORIZED.throwServiceException()
         }
-
         return actor!!
     }
 }

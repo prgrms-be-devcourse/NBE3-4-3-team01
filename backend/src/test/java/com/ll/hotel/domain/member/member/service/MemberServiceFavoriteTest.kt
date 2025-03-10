@@ -1,15 +1,19 @@
 package com.ll.hotel.domain.member.member.service
 
-import com.ll.hotel.domain.member.member.dto.FavoriteDto
 import com.ll.hotel.domain.hotel.hotel.entity.Hotel
 import com.ll.hotel.domain.hotel.hotel.repository.HotelRepository
 import com.ll.hotel.domain.hotel.hotel.type.HotelStatus
+import com.ll.hotel.domain.member.member.entity.Business
 import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.domain.member.member.entity.Role
 import com.ll.hotel.domain.member.member.repository.MemberRepository
+import com.ll.hotel.domain.member.member.repository.BusinessRepository
+import com.ll.hotel.domain.member.member.type.BusinessApprovalStatus
 import com.ll.hotel.domain.member.member.type.MemberStatus
 import com.ll.hotel.global.exceptions.ServiceException
 import com.ll.hotel.global.request.Rq
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -22,10 +26,8 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.util.ReflectionTestUtils
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.time.LocalTime
-import java.util.HashSet
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -40,6 +42,9 @@ class MemberServiceFavoriteTest {
     
     @Autowired
     private lateinit var hotelRepository: HotelRepository
+    
+    @Autowired
+    private lateinit var businessRepository: BusinessRepository
     
     @Mock
     private lateinit var rq: Rq
@@ -66,25 +71,41 @@ class MemberServiceFavoriteTest {
         )
         
         memberRepository.save(testMember)
+
+        // 엘비스 연산자 X 버전 (추후 필드에 엘비스 연산자 추가되면 필요없음)
+        val testBusiness = Business(
+            businessRegistrationNumber = "1234567890",
+            startDate = LocalDate.now(),
+            ownerName = "테스트 사업자",
+            approvalStatus = BusinessApprovalStatus.APPROVED,
+            member = testMember
+        )
         
-        testHotel = Hotel.builder()
-                .hotelName("Test Hotel")
-                .hotelEmail("hotel@example.com")
-                .hotelPhoneNumber("02-123-4567")
-                .streetAddress("123 Test St")
-                .zipCode(12345)
-                .hotelGrade(5)
-                .checkInTime(LocalTime.of(14, 0))
-                .checkOutTime(LocalTime.of(11, 0))
-                .hotelExplainContent("Test hotel description")
-                .hotelStatus(HotelStatus.PENDING)
-                .favorites(HashSet())
-                .build()
+        // Business 객체 저장
+        businessRepository.save(testBusiness)
+        
+        testHotel = Hotel(
+                hotelName = "Test Hotel",
+                hotelEmail = "hotel@example.com",
+                hotelPhoneNumber = "02-123-4567",
+                streetAddress = "123 Test St",
+                zipCode = 12345,
+                hotelGrade = 5,
+                checkInTime = LocalTime.of(14, 0),
+                checkOutTime = LocalTime.of(11, 0),
+                hotelExplainContent = "Test hotel description",
+                hotelStatus = HotelStatus.PENDING,
+                favorites = HashSet(),
+                averageRating = 0.0,
+                totalReviewRatingSum = 0L,
+                totalReviewCount = 0L,
+                business = testBusiness
+        )
         
         hotelRepository.save(testHotel)
         
         // Rq 모킹 설정
-        Mockito.`when`(rq.actor).thenReturn(testMember)
+        Mockito.`when`(rq.getActor()).thenReturn(testMember)
     }
     
     @Test
@@ -103,7 +124,7 @@ class MemberServiceFavoriteTest {
     @DisplayName("즐겨찾기 추가 실패 - 로그인하지 않은 경우")
     fun addFavorite_Fail_NotLoggedIn() {
         // 로그인하지 않은 상태 모킹
-        Mockito.`when`(rq.actor).thenReturn(null)
+        Mockito.`when`(rq.getActor()).thenReturn(null)
         
         // when & then
         assertThatThrownBy { memberService.addFavorite(testHotel.id) }

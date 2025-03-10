@@ -21,7 +21,7 @@ data class PutRoomRequest(
     @field:Min(value = 1)
     val maxNumber: Int,
 
-    val bedTypeNumber: BedTypeNumber,
+    val bedTypeNumber: BedTypeNumber = BedTypeNumber(),
 
     @field:NotBlank
     val roomStatus: String,

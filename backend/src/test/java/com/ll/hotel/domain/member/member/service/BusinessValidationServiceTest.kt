@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -17,7 +18,7 @@ import java.time.LocalDate
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class BusinessValidationServiceTest(
+class BusinessValidationServiceTest @Autowired constructor(
     private val businessValidationService: BusinessValidationService
 ) {
 
@@ -44,9 +45,9 @@ class BusinessValidationServiceTest(
         // Then
         assertThat(exception.resultCode)
             .isIn(
-                ErrorCode.INVALID_BUSINESS_INFO,
-                ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE,
-                ErrorCode.EXTERNAL_API_COMMUNICATION_ERROR
+                ErrorCode.INVALID_BUSINESS_INFO.httpStatus,
+                ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE.httpStatus,
+                ErrorCode.EXTERNAL_API_COMMUNICATION_ERROR.httpStatus
             )
     }
 }

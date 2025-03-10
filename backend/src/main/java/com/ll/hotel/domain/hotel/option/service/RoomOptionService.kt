@@ -36,7 +36,7 @@ class RoomOptionService(
         val roomOption = findById(id)
 
         if (roomOption.rooms.isNotEmpty()) {
-            ErrorCode.OPTION_IN_USE.throwServiceException()
+            throw ErrorCode.OPTION_IN_USE.throwServiceException()
         }
         roomOptionRepository.delete(roomOption)
     }

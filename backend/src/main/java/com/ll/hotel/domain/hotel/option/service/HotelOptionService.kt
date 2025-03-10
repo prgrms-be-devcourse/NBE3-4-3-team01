@@ -36,7 +36,7 @@ class HotelOptionService(
         val hotelOption = findById(id)
 
         if (hotelOption.hotels.isNotEmpty()) {
-            ErrorCode.OPTION_IN_USE.throwServiceException()
+            throw ErrorCode.OPTION_IN_USE.throwServiceException()
         }
         hotelOptionRepository.delete(hotelOption)
     }

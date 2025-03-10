@@ -2,11 +2,13 @@ package com.ll.hotel.domain.hotel.option.controller
 
 import com.ll.hotel.domain.hotel.option.entity.HotelOption
 import com.ll.hotel.domain.hotel.option.repository.HotelOptionRepository
+import io.mockk.clearAllMocks
 import jakarta.transaction.Transactional
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
@@ -23,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 @AutoConfigureMockMvc
 @Transactional
 @WithMockUser(username = "admin", roles = ["ADMIN"])
-class HotelOptionControllerTest (
+class HotelOptionControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val hotelOptionRepository: HotelOptionRepository
 ) {
@@ -31,6 +33,7 @@ class HotelOptionControllerTest (
 
     @BeforeEach
     fun setUp() {
+        clearAllMocks()
         testId = hotelOptionRepository.save(HotelOption("호텔 옵션")).id
     }
 

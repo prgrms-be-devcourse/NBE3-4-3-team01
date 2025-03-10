@@ -12,13 +12,14 @@ import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class HotelOptionServiceTest (
+class HotelOptionServiceTest @Autowired constructor(
     private val hotelOptionService: HotelOptionService,
     private val hotelOptionRepository: HotelOptionRepository
 ) {

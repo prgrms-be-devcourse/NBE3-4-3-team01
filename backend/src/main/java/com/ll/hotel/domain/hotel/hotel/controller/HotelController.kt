@@ -65,18 +65,18 @@ class HotelController(
         @RequestParam(required = false) filterDirection: String?,
         @RequestParam(defaultValue = "") streetAddress: String,
         @RequestParam(defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) checkInDate: LocalDate,
-        @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().plusDays(1)}") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) checkoutDate: LocalDate,
+        @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().plusDays(1)}") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) checkOutDate: LocalDate,
         @RequestParam(defaultValue = "2") personal: Int
     ): RsData<PageDto<GetHotelResponse>> {
         checkPageSize(pageSize)
-        checkCheckInAndOutDate(checkInDate, checkoutDate)
+        checkCheckInAndOutDate(checkInDate, checkOutDate)
 
         return RsData.success(
             HttpStatus.OK,
             PageDto(
                 this.hotelService.findAllHotels(
                     page, pageSize, filterName, filterDirection, streetAddress,
-                    checkInDate, checkoutDate, personal
+                    checkInDate, checkOutDate, personal
                 )
             )
         )
@@ -94,12 +94,12 @@ class HotelController(
     fun findHotelDetailWithAvailableRooms(
         @PathVariable hotelId: Long,
         @RequestParam(defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) checkInDate: LocalDate,
-        @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().plusDays(1)}") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) checkoutDate: LocalDate,
+        @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().plusDays(1)}") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) checkOutDate: LocalDate,
         @RequestParam(defaultValue = "2") personal: Int
     ): RsData<GetHotelDetailResponse> {
         return RsData.success(
             HttpStatus.OK,
-            this.hotelService.findHotelDetailWithAvailableRooms(hotelId, checkInDate, checkoutDate, personal)
+            this.hotelService.findHotelDetailWithAvailableRooms(hotelId, checkInDate, checkOutDate, personal)
         )
     }
 
