@@ -5,6 +5,12 @@ import com.ll.hotel.domain.hotel.hotel.repository.HotelRepository
 import com.ll.hotel.domain.hotel.hotel.type.HotelStatus
 import com.ll.hotel.domain.member.admin.dto.request.AdminHotelRequest
 import com.ll.hotel.domain.member.admin.dto.response.AdminHotelResponse
+import com.ll.hotel.domain.member.member.entity.Business
+import com.ll.hotel.domain.member.member.entity.Member
+import com.ll.hotel.domain.member.member.entity.Role
+import com.ll.hotel.domain.member.member.repository.BusinessRepository
+import com.ll.hotel.domain.member.member.repository.MemberRepository
+import com.ll.hotel.domain.member.member.type.MemberStatus
 import com.ll.hotel.global.exceptions.ErrorCode
 import com.ll.hotel.global.exceptions.ServiceException
 import org.assertj.core.api.Assertions.assertThat
@@ -15,6 +21,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.time.LocalTime
 
 @SpringBootTest
@@ -22,15 +29,40 @@ import java.time.LocalTime
 @Transactional
 class AdminHotelServiceTest(
     private val adminHotelService: AdminHotelService,
-    private val hotelRepository: HotelRepository
+    private val hotelRepository: HotelRepository,
+    private val businessRepository: BusinessRepository,
+    private val memberRepository: MemberRepository
 ) {
     var testId: Long = 0L
 
     @BeforeEach
     fun setUp() {
+        val member = memberRepository.save(
+            Member(
+                birthDate = LocalDate.now(),
+                memberEmail = "member@email.com",
+                memberName = "member",
+                memberPhoneNumber = "01012345678",
+                memberStatus = MemberStatus.ACTIVE,
+                role = Role.BUSINESS
+            )
+        )
+
+        val business = businessRepository.save(
+            Business(
+                businessRegistrationNumber = "1234567890",
+                startDate = LocalDate.now(),
+                ownerName = "홍길동",
+                member = member
+            )
+        )
+
         val hotel = hotelRepository.save(
             Hotel(
                 hotelName = "호텔",
+                hotelExplainContent = "호텔 설명",
+                streetAddress = "호텔 주소",
+                zipCode = 12345,
                 hotelEmail = "hotel@email.com",
                 hotelGrade = 5,
                 hotelStatus = HotelStatus.PENDING,
@@ -39,7 +71,8 @@ class AdminHotelServiceTest(
                 hotelPhoneNumber = "01012345678",
                 averageRating = 5.6,
                 totalReviewCount = 3L,
-                totalReviewRatingSum = 5L
+                totalReviewRatingSum = 5L,
+                business = business,
             )
         )
         testId = hotel.id
