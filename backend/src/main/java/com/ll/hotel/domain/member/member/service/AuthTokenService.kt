@@ -28,12 +28,12 @@ class AuthTokenService(
         claims["role"] = role
         claims["type"] = "access"
 
-        return Ut.jwt.toString(jwtProperties, claims)
+        return Ut.Jwt.toString(jwtProperties, claims)
     }
 
     fun verifyToken(token: String): Boolean {
         return try {
-            val claims = Ut.jwt.getClaims(jwtProperties, token)
+            val claims = Ut.Jwt.getClaims(jwtProperties, token)
             claims.expiration.after(Date())
         } catch (e: Exception) {
             false
@@ -41,6 +41,6 @@ class AuthTokenService(
     }
 
     fun getEmail(token: String): String {
-        return Ut.jwt.getClaims(jwtProperties, token).subject
+        return Ut.Jwt.getClaims(jwtProperties, token).subject
     }
 } 

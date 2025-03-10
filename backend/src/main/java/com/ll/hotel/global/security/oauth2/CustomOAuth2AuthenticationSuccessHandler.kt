@@ -72,7 +72,7 @@ class CustomOAuth2AuthenticationSuccessHandler(
                     roleData["hotelId"] = hotel.id
                 }
             }
-            val encodedRoleData = URLEncoder.encode(Ut.json.toString(roleData), StandardCharsets.UTF_8)
+            val encodedRoleData = URLEncoder.encode(Ut.Json.toString(roleData), StandardCharsets.UTF_8)
 
             val roleCookie = Cookie("role", encodedRoleData)
             roleCookie.secure = true
