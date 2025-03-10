@@ -14,6 +14,7 @@ data class PaymentResponse(
     val modifiedAt: LocalDateTime
 ) {
     companion object {
+        @JvmStatic
         fun from(payment: Payment): PaymentResponse {
             return PaymentResponse(
                 paymentId = payment.id,

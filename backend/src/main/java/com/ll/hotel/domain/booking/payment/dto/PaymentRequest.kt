@@ -14,6 +14,7 @@ data class PaymentRequest(
     val paidAtTimestamp: Long
 ) {
     companion object {
+        @JvmStatic
         fun from(bookingRequest: BookingRequest): PaymentRequest {
             return PaymentRequest(
                 merchantUid = bookingRequest.merchantUid,

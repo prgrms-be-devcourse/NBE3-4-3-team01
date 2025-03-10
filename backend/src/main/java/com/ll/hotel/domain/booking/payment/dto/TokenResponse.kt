@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonIgnoreProperties(ignoreUnknown = true) // 불필요한 필드 무시
 data class TokenResponse(
     val code: Int,
-    val message: String,
-    val response: ResponseData
+    val message: String?,
+    val response: ResponseData?
 ) {
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class ResponseData(
