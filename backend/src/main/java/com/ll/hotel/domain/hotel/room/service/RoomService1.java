@@ -4,7 +4,14 @@ import com.ll.hotel.domain.hotel.hotel.entity.Hotel;
 import com.ll.hotel.domain.hotel.hotel.repository.HotelRepository;
 import com.ll.hotel.domain.hotel.option.entity.RoomOption;
 import com.ll.hotel.domain.hotel.option.repository.RoomOptionRepository;
-import com.ll.hotel.domain.hotel.room.dto.*;
+import com.ll.hotel.domain.hotel.room.dto.GetAllRoomOptionsResponse;
+import com.ll.hotel.domain.hotel.room.dto.GetRoomDetailResponse;
+import com.ll.hotel.domain.hotel.room.dto.GetRoomResponse;
+import com.ll.hotel.domain.hotel.room.dto.PostRoomRequest;
+import com.ll.hotel.domain.hotel.room.dto.PostRoomResponse;
+import com.ll.hotel.domain.hotel.room.dto.PutRoomRequest;
+import com.ll.hotel.domain.hotel.room.dto.PutRoomResponse;
+import com.ll.hotel.domain.hotel.room.dto.RoomDto;
 import com.ll.hotel.domain.hotel.room.entity.Room;
 import com.ll.hotel.domain.hotel.room.repository.RoomRepository;
 import com.ll.hotel.domain.hotel.room.type.BedTypeNumber;
@@ -17,11 +24,6 @@ import com.ll.hotel.domain.review.review.dto.response.PresignedUrlsResponse;
 import com.ll.hotel.global.annotation.BusinessOnly;
 import com.ll.hotel.global.aws.s3.S3Service;
 import com.ll.hotel.global.exceptions.ErrorCode;
-import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
@@ -29,11 +31,15 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class RoomService {
+public class RoomService1 {
     private final ImageService imageService;
     private final S3Service s3Service;
     private final HotelRepository hotelRepository;
