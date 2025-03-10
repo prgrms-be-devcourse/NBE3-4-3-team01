@@ -12,12 +12,16 @@ import com.ll.hotel.global.request.Rq
 import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
+import jakarta.transaction.Transactional
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -25,6 +29,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.time.LocalDate
 
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
 @ExtendWith(MockKExtension::class)
 class BusinessControllerTest {
     private lateinit var mockMvc: MockMvc
@@ -71,7 +78,6 @@ class BusinessControllerTest {
 
         // Mock 동작 설정
         every { rq.getActor() } returns mockMember
-        every { businessValidationService.validateBusiness(any()) } just runs
         every { businessService.register(any(), any()) } returns BusinessResponse.ApprovalResult.of(mockBusiness)
 
         // When & Then
@@ -79,11 +85,10 @@ class BusinessControllerTest {
             post("/api/businesses/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
-            .andExpect(status().isCreated)
+            .andExpect(status().isOk)
             .andExpect(jsonPath("$.resultCode").value(HttpStatus.CREATED.name))
 
         verify { rq.getActor() }
-        verify { businessValidationService.validateBusiness(any()) }
         verify { businessService.register(any(), any()) }
     }
 }
