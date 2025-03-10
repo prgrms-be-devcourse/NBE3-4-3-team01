@@ -39,8 +39,6 @@ class AdminBusinessControllerTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
-        memberRepository.deleteAll()
-
         val member = memberRepository.save(
             Member(
                 birthDate = LocalDate.now(),

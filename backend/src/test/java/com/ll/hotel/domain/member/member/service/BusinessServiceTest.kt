@@ -32,8 +32,6 @@ class BusinessServiceTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
-        memberRepository.deleteAll()
-
         testId = memberRepository.save(
             Member(
                 birthDate = LocalDate.now(),

@@ -44,8 +44,6 @@ class AdminHotelControllerTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
-        memberRepository.deleteAll()
-
         val member = memberRepository.save(
             Member(
                 birthDate = LocalDate.now(),
