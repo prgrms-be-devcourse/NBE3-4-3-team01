@@ -42,6 +42,9 @@ dependencies {
 	runtimeOnly("com.h2database:h2")
 	annotationProcessor("org.projectlombok:lombok")
 
+	// CoolSMS API
+	implementation("net.nurigo:sdk:4.3.0")
+
 	// OpenAPI (Swagger)
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1")
 
