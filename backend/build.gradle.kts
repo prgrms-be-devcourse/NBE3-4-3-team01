@@ -37,6 +37,7 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.slf4j:slf4j-api:2.0.9")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
@@ -63,7 +64,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-
+	testImplementation("io.mockk:mockk:1.13.5")
 }
 
 // 코틀린 컴파일러 설정

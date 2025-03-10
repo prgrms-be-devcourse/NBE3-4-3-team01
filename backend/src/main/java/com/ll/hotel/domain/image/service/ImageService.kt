@@ -3,7 +3,7 @@ package com.ll.hotel.domain.image.service;
 import com.ll.hotel.domain.image.entity.Image;
 import com.ll.hotel.domain.image.repository.ImageRepository;
 import com.ll.hotel.domain.image.type.ImageType;
-import com.ll.hotel.standard.util.Ut;
+import com.ll.hotel.standard.util.Ut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +21,7 @@ class ImageService(
     }
 
     fun deleteImagesByIdAndUrls(imageType: ImageType, id: Long, urls: List<String>) {
-        if (Ut.list.hasValue(urls)) {
+        if (Ut.ListUt.hasValue(urls)) {
             imageRepository.deleteByReferenceIdAndImageUrls(imageType, id, urls);
         }
     }

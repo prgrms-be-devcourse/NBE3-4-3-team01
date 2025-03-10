@@ -384,11 +384,11 @@ class HotelServiceTest {
         GetHotelDetailResponse detRes = this.hotelService.findHotelDetail(hotel.getId());
 
         // then_1
-        assertEquals(hotel.getId(), detRes.hotelDetailDto().hotelId());
-        assertEquals("강남호텔", detRes.hotelDetailDto().hotelName());
-        assertEquals("서울시 강남구 호텔로 10", detRes.hotelDetailDto().streetAddress());
-        assertTrue(detRes.hotelDetailDto().hotelOptions().contains("무료 Wi-Fi"));
-        assertTrue(detRes.hotelDetailDto().hotelOptions().contains("프론트 데스크"));
+        assertEquals(hotel.getId(), detRes.hotelDetailDto.hotelId());
+        assertEquals("강남호텔", detRes.hotelDetailDto.hotelName());
+        assertEquals("서울시 강남구 호텔로 10", detRes.hotelDetailDto.streetAddress());
+        assertTrue(detRes.hotelDetailDto.hotelOptions().contains("무료 Wi-Fi"));
+        assertTrue(detRes.hotelDetailDto.hotelOptions().contains("프론트 데스크"));
 
         // given_2
         business = this.createBusiness("새사장1", "newHotel1@gmail.com");
@@ -407,10 +407,10 @@ class HotelServiceTest {
         detRes = this.hotelService.findHotelDetail(hotel.getId());
 
         // then_2
-        assertEquals(res1.hotelId(), detRes.hotelDetailDto().hotelId());
-        assertEquals("호텔1", detRes.hotelDetailDto().hotelName());
-        assertEquals("서울시", detRes.hotelDetailDto().streetAddress());
-        assertEquals(detRes.hotelDetailDto().hotelOptions().size(), 0);
+        assertEquals(res1.hotelId(), detRes.hotelDetailDto.hotelId());
+        assertEquals("호텔1", detRes.hotelDetailDto.hotelName());
+        assertEquals("서울시", detRes.hotelDetailDto.streetAddress());
+        assertEquals(detRes.hotelDetailDto.hotelOptions().size(), 0);
     }
 
     @Test

@@ -306,7 +306,7 @@ class MemberService(
         }
         
         val encodedRoleData = URLEncoder.encode(
-            Ut.json.toString(roleData),
+            Ut.Json.toString(roleData),
             StandardCharsets.UTF_8
         )
         

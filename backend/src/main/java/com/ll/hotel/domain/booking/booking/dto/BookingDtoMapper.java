@@ -37,7 +37,7 @@ public class BookingDtoMapper {
         GetRoomDetailResponse roomDetailResponse = getRoomDetailResponse(hotelId, roomId);
 
         return new BookingFormResponse(
-                hotelDetailResponse.hotelDetailDto(),
+                hotelDetailResponse.hotelDetailDto,
                 roomDetailResponse.roomDto(),
                 new String[] {
                         getThumbnailUrl(hotelDetailResponse.hotelImageUrls()),
@@ -58,7 +58,7 @@ public class BookingDtoMapper {
                 booking.getId(),
                 booking.getHotel().getId(),
                 booking.getRoom().getId(),
-                hotelDetailResponse.hotelDetailDto().hotelName(),
+                hotelDetailResponse.hotelDetailDto.hotelName(),
                 roomDetailResponse.roomDto().roomName(),
                 booking.getMember().getMemberName(),
                 getThumbnailUrl(hotelDetailResponse.hotelImageUrls()),
@@ -78,7 +78,7 @@ public class BookingDtoMapper {
 
         return new BookingResponseDetails(
                 booking.getId(),
-                hotelDetailResponse.hotelDetailDto(),
+                hotelDetailResponse.hotelDetailDto,
                 roomDetailResponse.roomDto(),
                 new String[] {
                         getThumbnailUrl(hotelDetailResponse.hotelImageUrls()),
