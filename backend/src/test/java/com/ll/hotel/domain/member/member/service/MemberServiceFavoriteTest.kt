@@ -7,6 +7,7 @@ import com.ll.hotel.domain.member.member.entity.Business
 import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.domain.member.member.entity.Role
 import com.ll.hotel.domain.member.member.repository.MemberRepository
+import com.ll.hotel.domain.member.member.repository.BusinessRepository
 import com.ll.hotel.domain.member.member.type.BusinessApprovalStatus
 import com.ll.hotel.domain.member.member.type.MemberStatus
 import com.ll.hotel.global.exceptions.ServiceException
@@ -42,6 +43,9 @@ class MemberServiceFavoriteTest {
     @Autowired
     private lateinit var hotelRepository: HotelRepository
     
+    @Autowired
+    private lateinit var businessRepository: BusinessRepository
+    
     @Mock
     private lateinit var rq: Rq
     
@@ -76,6 +80,9 @@ class MemberServiceFavoriteTest {
             approvalStatus = BusinessApprovalStatus.APPROVED,
             member = testMember
         )
+        
+        // Business 객체 저장
+        businessRepository.save(testBusiness)
         
         testHotel = Hotel(
                 hotelName = "Test Hotel",
