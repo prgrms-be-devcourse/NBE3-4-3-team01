@@ -89,7 +89,7 @@ class AdminBusinessServiceTest @Autowired constructor(
         }
 
         // Then
-        assertThat(exception.resultCode).isEqualTo(ErrorCode.PAGE_NOT_FOUND)
+        assertThat(exception.resultCode).isEqualTo(ErrorCode.PAGE_NOT_FOUND.httpStatus)
     }
 
     @Test
@@ -120,7 +120,7 @@ class AdminBusinessServiceTest @Autowired constructor(
         }
 
         // Then
-        assertThat(exception.resultCode).isEqualTo(ErrorCode.BUSINESS_NOT_FOUND)
+        assertThat(exception.resultCode).isEqualTo(ErrorCode.BUSINESS_NOT_FOUND.httpStatus)
     }
 
     @Test

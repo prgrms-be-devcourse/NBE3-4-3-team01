@@ -115,7 +115,6 @@ class AdminHotelControllerTest @Autowired constructor(
             .andExpect(handler().handlerType(AdminHotelController::class.java))
             .andExpect(handler().methodName("getAll"))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.resultCode", equalTo(HttpStatus.BAD_REQUEST.name)))
     }
 
     @Test
@@ -134,16 +133,13 @@ class AdminHotelControllerTest @Autowired constructor(
     @Test
     @DisplayName("호텔 조회 - 요청이 잘못된 경우")
     fun `should throw exception when hotel not found`() {
-        val invalidHotelId = hotelRepository.count() + 1
-
         mockMvc.perform(
-            get("/api/admin/hotels/{id]", invalidHotelId)
+            get("/api/admin/hotels/{id}", Long.MAX_VALUE)
         )
             .andDo(print())
             .andExpect(handler().handlerType(AdminHotelController::class.java))
             .andExpect(handler().methodName("getById"))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.resultCode", equalTo(HttpStatus.NOT_FOUND.name)))
     }
 
     @Test

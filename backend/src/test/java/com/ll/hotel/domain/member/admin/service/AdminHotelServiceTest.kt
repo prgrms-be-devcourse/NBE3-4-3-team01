@@ -111,7 +111,7 @@ class AdminHotelServiceTest @Autowired constructor(
         }
 
         // Then
-        assertThat(exception.resultCode).isEqualTo(ErrorCode.PAGE_NOT_FOUND)
+        assertThat(exception.resultCode).isEqualTo(ErrorCode.PAGE_NOT_FOUND.httpStatus)
     }
 
     @Test
@@ -142,7 +142,7 @@ class AdminHotelServiceTest @Autowired constructor(
         }
 
         // Then
-        assertThat(exception.resultCode).isEqualTo(ErrorCode.HOTEL_NOT_FOUND)
+        assertThat(exception.resultCode).isEqualTo(ErrorCode.HOTEL_NOT_FOUND.httpStatus)
     }
 
     @Test

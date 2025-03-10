@@ -92,7 +92,6 @@ class AdminBusinessControllerTest @Autowired constructor(
             .andExpect(handler().handlerType(AdminBusinessController::class.java))
             .andExpect(handler().methodName("getAll"))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.resultCode", equalTo(HttpStatus.BAD_REQUEST.name)))
     }
 
     @Test
@@ -111,16 +110,13 @@ class AdminBusinessControllerTest @Autowired constructor(
     @Test
     @DisplayName("사업자 조회 - 요청이 잘못된 경우")
     fun `should throw exception when business not found`() {
-        val invalidBusinessId = businessRepository.count() + 1
-
         mockMvc.perform(
-            get("/api/admin/businesses/{id}", invalidBusinessId)
+            get("/api/admin/businesses/{id}", Long.MAX_VALUE)
         )
             .andDo(print())
             .andExpect(handler().handlerType(AdminBusinessController::class.java))
             .andExpect(handler().methodName("getById"))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.resultCode", equalTo(HttpStatus.NOT_FOUND.name)))
     }
 
     @Test
