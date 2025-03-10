@@ -3,10 +3,12 @@ package com.ll.hotel.domain.member.member.controller
 import com.ll.hotel.domain.hotel.hotel.entity.Hotel
 import com.ll.hotel.domain.hotel.hotel.repository.HotelRepository
 import com.ll.hotel.domain.hotel.hotel.type.HotelStatus
+import com.ll.hotel.domain.member.member.entity.Business
 import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.domain.member.member.entity.Role
 import com.ll.hotel.domain.member.member.repository.MemberRepository
 import com.ll.hotel.domain.member.member.service.MemberService
+import com.ll.hotel.domain.member.member.type.BusinessApprovalStatus
 import com.ll.hotel.domain.member.member.type.MemberStatus
 import com.ll.hotel.global.request.Rq
 import org.junit.jupiter.api.BeforeEach
@@ -27,6 +29,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.time.LocalTime
 
 @SpringBootTest
@@ -73,45 +76,56 @@ class FavoriteControllerTest {
         )
         
         memberRepository.save(testMember)
+
+        // 엘비스 연산자 X 버전 (추후 필드에 엘비스 연산자 추가되면 필요없음)
+        val testBusiness = Business(
+            businessRegistrationNumber = "1234567890",
+            startDate = LocalDate.now(),
+            ownerName = "테스트 사업자",
+            approvalStatus = BusinessApprovalStatus.APPROVED,
+            member = testMember
+        )
         
         // Rq 모킹 설정
         Mockito.`when`(rq.getActor()).thenReturn(testMember)
         
         // 테스트 호텔 설정
-        testHotel1 = Hotel.builder()
-                .hotelName("테스트 호텔1")
-                .streetAddress("서울시 강남구")
-                .zipCode(12345)
-                .hotelGrade(5)
-                .checkInTime(LocalTime.of(14, 0))
-                .checkOutTime(LocalTime.of(12, 0))
-                .hotelExplainContent("호텔 설명")
-                .hotelStatus(HotelStatus.PENDING)
-                .averageRating(4.5)
-                .totalReviewRatingSum(0L)
-                .totalReviewCount(0L)
-                .hotelEmail("hotel1@example.com")
-                .hotelPhoneNumber("010-1111-1111")
-                .favorites(HashSet())
-                .build()
-        
-        testHotel2 = Hotel.builder()
-                .hotelName("테스트 호텔2")
-                .streetAddress("서울시 서초구")
-                .zipCode(54321)
-                .hotelGrade(4)
-                .checkInTime(LocalTime.of(15, 0))
-                .checkOutTime(LocalTime.of(11, 0))
-                .hotelExplainContent("호텔 설명2")
-                .hotelStatus(HotelStatus.PENDING)
-                .averageRating(4.0)
-                .totalReviewRatingSum(0L)
-                .totalReviewCount(0L)
-                .hotelEmail("hotel2@example.com")
-                .hotelPhoneNumber("010-2222-2222")
-                .favorites(HashSet())
-                .build()
-        
+        testHotel1 = Hotel(
+                hotelName = "테스트 호텔1",
+                streetAddress = "서울시 강남구",
+                zipCode = 12345,
+                hotelGrade = 5,
+                checkInTime = LocalTime.of(14, 0),
+                checkOutTime = LocalTime.of(12, 0),
+                hotelExplainContent = "호텔 설명",
+                hotelStatus = HotelStatus.PENDING,
+                averageRating = 4.5,
+                totalReviewRatingSum = 0L,
+                totalReviewCount = 0L,
+                hotelEmail = "hotel1@example.com",
+                hotelPhoneNumber = "010-1111-1111",
+                favorites = HashSet(),
+                business = testBusiness
+        )
+
+        testHotel2 = Hotel(
+                hotelName = "테스트 호텔2",
+                streetAddress = "서울시 서초구",
+                zipCode = 54321,
+                hotelGrade = 4,
+                checkInTime = LocalTime.of(15, 0),
+                checkOutTime = LocalTime.of(11, 0),
+                hotelExplainContent = "호텔 설명2",
+                hotelStatus = HotelStatus.PENDING,
+                averageRating = 4.0,
+                totalReviewRatingSum = 0L,
+                totalReviewCount = 0L,
+                hotelEmail = "hotel2@example.com",
+                hotelPhoneNumber = "010-2222-2222",
+                favorites = HashSet(),
+                business = testBusiness
+        )
+
         hotelRepository.save(testHotel1)
         hotelRepository.save(testHotel2)
     }
