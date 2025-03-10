@@ -6,13 +6,20 @@ import com.ll.hotel.domain.hotel.option.entity.RoomOption
 import com.ll.hotel.domain.hotel.option.repository.RoomOptionRepository
 import com.ll.hotel.global.exceptions.ErrorCode
 import com.ll.hotel.global.exceptions.ServiceException
+import jakarta.transaction.Transactional
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 
-class RoomOptionServiceTest (
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
+class RoomOptionServiceTest @Autowired constructor(
     private val roomOptionService: RoomOptionService,
     private val roomOptionRepository: RoomOptionRepository
     ) {
