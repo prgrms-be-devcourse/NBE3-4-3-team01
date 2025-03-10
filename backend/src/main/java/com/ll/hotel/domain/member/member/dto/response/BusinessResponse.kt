@@ -25,7 +25,11 @@ class BusinessResponse {
         }
     }
 
-    data class Verification(
-        val data: List<Map<String, Any>>
+    data class VerificationResponse(
+        val data: List<VerificationData>
+    )
+
+    data class VerificationData(
+        val valid: String
     )
 }

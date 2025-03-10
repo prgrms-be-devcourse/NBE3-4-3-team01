@@ -25,24 +25,19 @@ class BusinessValidationService(
                 uri,
                 HttpMethod.POST,
                 HttpEntity(registrationApiForm, createHeaders()),
-                BusinessResponse.Verification::class.java
+                BusinessResponse.VerificationResponse::class.java
             )
 
-            val response = responseEntity.body
-                ?: ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE.throwServiceException()
+            val valid = responseEntity.body?.data?.firstOrNull()?.valid.orEmpty()
 
-            val result = response.data.firstOrNull()
-                ?: ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE.throwServiceException()
-
-            val valid = result["valid"] as? String
-                ?: ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE.throwServiceException()
-
-            if (valid != "01") {
-                ErrorCode.INVALID_BUSINESS_INFO.throwServiceException()
+            when (valid) {
+                "01" -> return
+                "02" -> throw ErrorCode.INVALID_BUSINESS_INFO.throwServiceException()
+                else -> throw ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE.throwServiceException()
             }
 
         } catch (e: Exception) {
-            ErrorCode.EXTERNAL_API_COMMUNICATION_ERROR.throwServiceException(e)
+            throw ErrorCode.EXTERNAL_API_COMMUNICATION_ERROR.throwServiceException(e)
         }
     }
 
