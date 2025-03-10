@@ -210,7 +210,7 @@ class MemberService(
         }
 
         actor.favoriteHotels.add(hotel)
-        hotel.favorites.add(actor)
+        hotel.getFavorites().add(actor)
         
         memberRepository.save(actor)
         hotelRepository.save(hotel)
@@ -229,7 +229,7 @@ class MemberService(
         }
 
         actor.favoriteHotels.remove(hotel)
-        hotel.favorites.remove(actor)
+        hotel.getFavorites().remove(actor)
         
         memberRepository.save(actor)
         hotelRepository.save(hotel)
@@ -300,9 +300,9 @@ class MemberService(
         val roleData = HashMap<String, Any>()
         roleData["role"] = member.getUserRole()
         
-        if (member.getUserRole() == "BUSINESS" && member.business?.hotel != null) {
+        if (member.getUserRole() == "BUSINESS" && member.business?.getHotel() != null) {
             roleData["hasHotel"] = true
-            roleData["hotelId"] = member.business!!.hotel!!.id
+            roleData["hotelId"] = member.business!!.getHotel()!!.id
         }
         
         val encodedRoleData = URLEncoder.encode(
