@@ -1,6 +1,5 @@
 package com.ll.hotel.global.response
 
-import net.minidev.json.annotate.JsonIgnore
 import org.springframework.http.HttpStatus
 
 class RsData<T>(
@@ -8,8 +7,7 @@ class RsData<T>(
     val msg: String,
     val data: T
 ) {
-    @JsonIgnore
-    fun isSuccess(): Boolean = !resultCode.isError
+    val isSuccess: Boolean get() = !resultCode.isError
 
     companion object {
         @JvmStatic  // 모두 코틀린화 하면 제거

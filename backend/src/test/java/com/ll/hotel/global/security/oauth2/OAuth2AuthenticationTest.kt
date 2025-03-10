@@ -64,14 +64,14 @@ class OAuth2AuthenticationTest {
         ReflectionTestUtils.setField(memberService, "rq", rq)
 
         // 테스트용 회원 생성
-        testMember = Member.builder()
-                .memberEmail("oauth2test@example.com")
-                .memberName("OAuth2 테스트")
-                .memberPhoneNumber("010-9876-5432")
-                .role(Role.USER)
-                .memberStatus(MemberStatus.ACTIVE)
-                .oauths(ArrayList())
-                .build()
+        testMember = Member(
+            memberEmail = "oauth2test@example.com",
+            memberName = "OAuth2 테스트",
+            memberPhoneNumber = "010-9876-5432",
+            role = Role.USER,
+            memberStatus = MemberStatus.ACTIVE,
+            oauths = ArrayList()
+        )
 
         memberRepository.save(testMember)
 

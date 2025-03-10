@@ -76,13 +76,13 @@ class JwtAuthenticationTest {
         redisTemplate.connectionFactory?.connection?.flushAll()
 
         // 테스트 멤버 생성
-        testMember = Member.builder()
-                .memberEmail("test@example.com")
-                .memberName("테스트사용자")
-                .memberPhoneNumber("010-1234-5678")
-                .role(Role.USER)
-                .memberStatus(MemberStatus.ACTIVE)
-                .build()
+        testMember = Member(
+            memberEmail = "test@example.com",
+            memberName = "테스트사용자",
+            memberPhoneNumber = "010-1234-5678",
+            role = Role.USER,
+            memberStatus = MemberStatus.ACTIVE
+        )
         
         memberRepository.save(testMember)
         

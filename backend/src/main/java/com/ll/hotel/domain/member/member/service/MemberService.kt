@@ -69,14 +69,14 @@ class MemberService(
             throw EMAIL_ALREADY_EXISTS.throwServiceException()
         }
 
-        val newMember = Member.builder()
-                .memberEmail(joinRequest.email)
-                .memberName(joinRequest.name)
-                .memberPhoneNumber(joinRequest.phoneNumber)
-                .role(joinRequest.role)
-                .memberStatus(MemberStatus.ACTIVE)
-                .birthDate(joinRequest.birthDate)
-                .build()
+        val newMember = Member(
+            memberEmail = joinRequest.email,
+            memberName = joinRequest.name,
+            memberPhoneNumber = joinRequest.phoneNumber,
+            role = joinRequest.role,
+            memberStatus = MemberStatus.ACTIVE,
+            birthDate = joinRequest.birthDate
+        )
         
         val savedMember = memberRepository.save(newMember)
         
