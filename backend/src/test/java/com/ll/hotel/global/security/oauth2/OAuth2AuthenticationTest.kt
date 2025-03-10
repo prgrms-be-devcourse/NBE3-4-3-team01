@@ -86,7 +86,7 @@ class OAuth2AuthenticationTest {
         oAuthRepository.save(testOAuth)
         memberRepository.save(testMember)
 
-        `when`(rq.actor).thenReturn(testMember)
+        `when`(rq.getActor()).thenReturn(testMember)
     }
 
     @Test

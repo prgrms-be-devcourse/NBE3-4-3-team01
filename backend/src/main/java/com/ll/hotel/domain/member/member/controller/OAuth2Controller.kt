@@ -28,7 +28,7 @@ class OAuth2Controller(
             ))
         }
 
-        val actor = rq.actor
+        val actor = rq.getActor()
         if (actor == null) {
             return RsData.success(HttpStatus.UNAUTHORIZED, OAuth2Response(
                 null, null, status, null, null, null,

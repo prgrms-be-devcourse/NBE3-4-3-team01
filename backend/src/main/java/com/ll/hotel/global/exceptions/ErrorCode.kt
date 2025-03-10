@@ -108,15 +108,15 @@ enum class ErrorCode(val httpStatus: HttpStatus, val message: String) {
     INVALID_CHECK_IN_OUT_DATE(HttpStatus.BAD_REQUEST, "체크인 날짜는 체크아웃 날짜보다 늦을 수 없습니다."),
     INVALID_FILTER_DIRECTION(HttpStatus.BAD_REQUEST, "정렬 방향은 ASC 또는 DESC만 가능합니다.");
 
-    fun throwServiceException(): Nothing {
+    fun throwServiceException(): ServiceException {
         throw ServiceException(httpStatus, message)
     }
 
-    fun throwServiceException(cause: Throwable): Nothing {
+    fun throwServiceException(cause: Throwable): ServiceException {
         throw ServiceException(httpStatus, message, cause)
     }
 
-    fun throwS3Exception(cause: Throwable): Nothing {
+    fun throwS3Exception(cause: Throwable): S3Exception {
         throw CustomS3Exception(httpStatus, message, cause)
     }
 }
