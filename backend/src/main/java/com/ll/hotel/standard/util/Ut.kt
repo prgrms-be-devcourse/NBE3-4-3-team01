@@ -77,8 +77,8 @@ object Ut {
     }
 
     object ListUt {
-        fun <T> List<T>?.hasValue(): Boolean {
-            return !this.isNullOrEmpty()
+        fun <T> hasValue(list: List<T>?): Boolean {
+            return !list.isNullOrEmpty()
         }
     }
 }
