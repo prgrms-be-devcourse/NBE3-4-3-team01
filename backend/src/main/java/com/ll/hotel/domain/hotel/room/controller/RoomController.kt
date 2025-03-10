@@ -24,7 +24,7 @@ class RoomController(
         @PathVariable hotelId: Long,
         @RequestBody postRoomRequest: @Valid PostRoomRequest
     ): RsData<PostRoomResponse> {
-        val actor = this.rq.actor
+        val actor = this.rq.getActor()
 
         return RsData.success(HttpStatus.CREATED, this.roomService.createRoom(hotelId, actor, postRoomRequest))
     }
@@ -37,7 +37,7 @@ class RoomController(
         @PathVariable roomId: Long,
         @RequestBody urls: List<String>
     ) {
-        val actor = this.rq.actor
+        val actor = this.rq.getActor()
 
         this.roomService.saveImages(actor, ImageType.ROOM, roomId, urls)
     }
@@ -52,7 +52,7 @@ class RoomController(
                     """
     )
     fun deleteRoom(@PathVariable hotelId: Long, @PathVariable roomId: Long) {
-        val actor = this.rq.actor
+        val actor = this.rq.getActor()
 
         this.roomService.deleteRoom(hotelId, roomId, actor)
     }
@@ -76,7 +76,7 @@ class RoomController(
         @PathVariable roomId: Long,
         @RequestBody request: PutRoomRequest
     ): RsData<PutRoomResponse> {
-        val actor = this.rq.actor
+        val actor = this.rq.getActor()
 
         return RsData.success(HttpStatus.OK, this.roomService.modifyRoom(hotelId, roomId, actor, request))
     }
@@ -91,7 +91,7 @@ class RoomController(
                     """
     )
     fun findAllRoomOptions(@PathVariable hotelId: Long): RsData<GetAllRoomOptionsResponse> {
-        val actor = this.rq.actor
+        val actor = this.rq.getActor()
 
         return RsData.success(HttpStatus.OK, this.roomService.findAllRoomOptions(actor))
     }
