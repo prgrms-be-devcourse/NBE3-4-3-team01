@@ -29,7 +29,7 @@ class BusinessController(
         @RequestBody @Valid registrationInfo: BusinessRequest.RegistrationInfo
     ): RsData<BusinessResponse.ApprovalResult> {
 
-        val member: Member = rq.actor
+        val member: Member = rq.getActor()
 
         return RsData.success(HttpStatus.CREATED, businessService.register(registrationInfo, member))
     }
