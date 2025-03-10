@@ -9,7 +9,6 @@ import software.amazon.awssdk.core.exception.SdkException
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.*
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
-import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest
 import java.net.URL
 import java.time.Duration
 
@@ -22,7 +21,7 @@ class S3Service(
 
     // 여러 사진 한번에 저장
     fun generatePresignedUrls(imageType: ImageType, id: Long, fileTypes: List<String>): List<URL> {
-        if (!Ut.list.hasValue(fileTypes)) return emptyList()
+        if (!Ut.ListUt.hasValue(fileTypes)) return emptyList()
 
         return try {
             fileTypes.map { fileType ->
@@ -51,7 +50,7 @@ class S3Service(
 
     // URL 리스트를 받아 Object 모두 삭제
     fun deleteObjectsByUrls(urls: List<String>) {
-        if (!Ut.list.hasValue(urls)) return
+        if (!Ut.ListUt.hasValue(urls)) return
 
         try {
             val objectIdentifiers = urls.map { url ->

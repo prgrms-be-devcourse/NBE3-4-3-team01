@@ -31,6 +31,6 @@ class BusinessController(
 
         val member: Member = rq.actor
 
-        return RsData.success(HttpStatus.CREATED, businessService.register(registrationInfo. member))
+        return RsData.success(HttpStatus.CREATED, businessService.register(registrationInfo, member))
     }
 }
