@@ -32,6 +32,7 @@ class BusinessServiceTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
+        clearMocks(businessValidationService)
         testId = memberRepository.save(
             Member(
                 birthDate = LocalDate.now(),

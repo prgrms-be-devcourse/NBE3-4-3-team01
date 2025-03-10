@@ -2,6 +2,7 @@ package com.ll.hotel.domain.hotel.option.controller
 
 import com.ll.hotel.domain.hotel.option.entity.RoomOption
 import com.ll.hotel.domain.hotel.option.repository.RoomOptionRepository
+import io.mockk.clearAllMocks
 import jakarta.transaction.Transactional
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
@@ -32,6 +33,7 @@ class RoomOptionControllerTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
+        clearAllMocks()
         testId = roomOptionRepository.save(RoomOption("객실 옵션")).id
     }
 

@@ -7,6 +7,7 @@ import com.ll.hotel.domain.member.member.repository.BusinessRepository
 import com.ll.hotel.domain.member.member.repository.MemberRepository
 import com.ll.hotel.domain.member.member.type.BusinessApprovalStatus
 import com.ll.hotel.domain.member.member.type.MemberStatus
+import io.mockk.clearAllMocks
 import jakarta.transaction.Transactional
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
@@ -39,6 +40,7 @@ class AdminBusinessControllerTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
+        clearAllMocks()
         val member = memberRepository.save(
             Member(
                 birthDate = LocalDate.now(),

@@ -34,10 +34,11 @@ class BusinessControllerTest {
     private val businessService = mockk<BusinessService>()
 
     @InjectMockKs
-    private val businessController = BusinessController(businessService, rq)
+    private var businessController = BusinessController(businessService, rq)
 
     @BeforeEach
     fun setUp() {
+        clearAllMocks()
         mockMvc = MockMvcBuilders
             .standaloneSetup(businessController)
             .setControllerAdvice(GlobalExceptionHandler())
