@@ -26,6 +26,7 @@ import com.ll.hotel.standard.util.Ut
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.hibernate.query.SortDirection
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -59,8 +60,8 @@ class HotelService(
     @BusinessOnly
     @Transactional
     fun createHotel(actor: Member, postHotelRequest: PostHotelRequest): PostHotelResponse {
-        val business: Business =
-            this.businessRepository.findByMember(actor) ?: ErrorCode.BUSINESS_NOT_FOUND.throwServiceException()
+        val business: Business = this.businessRepository.findByMember(actor)
+            ?: run { throw ErrorCode.BUSINESS_NOT_FOUND.throwServiceException() }
 
         if (business.hotel != null) {
             ErrorCode.BUSINESS_HOTEL_LIMIT_EXCEEDED.throwServiceException()
@@ -79,7 +80,7 @@ class HotelService(
                 this.hotelRepository.save(hotel), this.saveHotelImages(hotel.id, postHotelRequest.imageExtensions)
             )
         } catch (_: DataIntegrityViolationException) {
-            ErrorCode.HOTEL_EMAIL_ALREADY_EXISTS.throwServiceException()
+            throw ErrorCode.HOTEL_EMAIL_ALREADY_EXISTS.throwServiceException()
         }
     }
 
@@ -109,16 +110,13 @@ class HotelService(
 
         val sortField = sortFieldMapping[filterName] ?: "createdAt"
 
-        val direction: Sort.Direction?
-        if (filterDirection == null) {
-            direction = Sort.Direction.DESC
-        } else {
+        val direction = filterDirection?.let {
             try {
-                direction = Sort.Direction.valueOf(filterDirection.uppercase(Locale.getDefault()))
+                Sort.Direction.valueOf(filterDirection.uppercase(Locale.getDefault()))
             } catch (e: IllegalArgumentException) {
-                ErrorCode.INVALID_FILTER_DIRECTION.throwServiceException()
+                throw ErrorCode.INVALID_FILTER_DIRECTION.throwServiceException()
             }
-        }
+        } ?: Sort.Direction.DESC
 
         val sort = Sort.by(direction, sortField)
         val pageRequest = PageRequest.of(page - 1, pageSize, sort)
@@ -140,7 +138,7 @@ class HotelService(
     @Transactional(readOnly = true)
     fun findHotelDetail(hotelId: Long): GetHotelDetailResponse {
         val hotel = this.hotelRepository.findHotelDetail(hotelId)
-            .orElseThrow { ErrorCode.HOTEL_NOT_FOUND.throwServiceException() }
+            ?: run { throw ErrorCode.HOTEL_NOT_FOUND.throwServiceException() }
 
         val imageUrls = this.imageService.findImagesById(ImageType.HOTEL, hotelId)
             .map { it.imageUrl }
@@ -156,7 +154,7 @@ class HotelService(
         checkoutDate: LocalDate, personal: Int
     ): GetHotelDetailResponse {
         val hotel = this.hotelRepository.findHotelDetail(hotelId)
-            .orElseThrow { ErrorCode.HOTEL_NOT_FOUND.throwServiceException() }
+            ?: run { throw ErrorCode.HOTEL_NOT_FOUND.throwServiceException() }
 
         val imageUrls = this.imageService.findImagesById(ImageType.HOTEL, hotelId)
             .map { it.imageUrl }

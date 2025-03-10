@@ -68,7 +68,7 @@ interface RoomRepository : JpaRepository<Room, Long> {
         AND r.roomStatus <> 'UNAVAILABLE'
         """
     )
-    fun findRoomDetail(@Param("hotelId") hotelId: Long, @Param("roomId") roomId: Long): Optional<Room>
+    fun findRoomDetail(@Param("hotelId") hotelId: Long, @Param("roomId") roomId: Long): Room?
 
     fun existsByHotelIdAndRoomNameAndIdNot(hotelId: Long, roomName: String, roomId: Long): Boolean
 }

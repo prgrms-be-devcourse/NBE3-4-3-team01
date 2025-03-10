@@ -32,7 +32,7 @@ class Room(
     var maxNumber: Int,
 
     @Embedded
-    var bedTypeNumber: BedTypeNumber,
+    var bedTypeNumber: BedTypeNumber = BedTypeNumber(),
 
     @Column
     @Enumerated(EnumType.STRING)

@@ -16,7 +16,7 @@ data class GetRoomResponse(
     val maxNumber: Int,
 
     @field:NotBlank
-    val bedTypeNotBlank: BedTypeNumber,
+    val bedTypeNumber: BedTypeNumber,
 
     val thumbnailUrl: String,
 
