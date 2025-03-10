@@ -166,7 +166,7 @@ class RoomService(
 
     private fun getRoomDetail(hotelId: Long, roomId: Long): Room =
         this.roomRepository.findRoomDetail(hotelId, roomId)
-            .orElseThrow { ErrorCode.ROOM_NOT_FOUND.throwServiceException() }
+            ?: run { throw ErrorCode.ROOM_NOT_FOUND.throwServiceException() }
 
     private fun checkHotelExists(hotelId: Long) {
         if (!this.hotelRepository.existsById(hotelId)) {

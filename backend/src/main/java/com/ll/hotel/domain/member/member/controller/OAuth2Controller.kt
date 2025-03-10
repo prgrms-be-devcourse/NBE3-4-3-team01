@@ -1,9 +1,7 @@
 package com.ll.hotel.domain.member.member.controller
 
-import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.global.request.Rq
 import com.ll.hotel.global.response.RsData
-import com.ll.hotel.global.security.oauth2.entity.OAuth
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
