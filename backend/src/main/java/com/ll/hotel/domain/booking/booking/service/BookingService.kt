@@ -78,16 +78,12 @@ class BookingService(
     // 호텔(사업자)측 예약 조회
     fun tryGetHotelBookings(member: Member, page: Int, pageSize: Int): Page<BookingResponseSummary> {
         // 호텔 사업자만 조회 가능
-        if (!member.isBusiness()) {
+        if (!member.isBusiness) {
             throw ErrorCode.BUSINESS_ACCESS_FORBIDDEN.throwServiceException()
         }
 
-        val myHotel = member.business?.hotel
-
         // 내 호텔이 없을 경우
-        if (myHotel == null) {
-            throw ErrorCode.HOTEL_NOT_FOUND.throwServiceException()
-        }
+        val myHotel = member.business?.hotel ?: throw ErrorCode.HOTEL_NOT_FOUND.throwServiceException()
 
         return findByHotel(myHotel, page, pageSize).map { booking -> bookingDtoMapper.getSummary(booking) }
     }
@@ -97,7 +93,7 @@ class BookingService(
         val booking = findById(bookingId)
 
         // 관리자, 예약자, 호텔 사업자만 조회 가능
-        if (!member.isAdmin() && !booking.isReservedBy(member) && !booking.isOwnedBy(member)) {
+        if (!member.isAdmin && !booking.isReservedBy(member) && !booking.isOwnedBy(member)) {
             throw ErrorCode.BOOKING_ACCESS_FORBIDDEN.throwServiceException()
         }
 
@@ -112,7 +108,7 @@ class BookingService(
         val booking = findById(bookingId)
 
         // 인가, 관리자/예약 당사자/호텔 주인일 경우 가능
-        if (!member.isAdmin() && !booking.isReservedBy(member) && !booking.isOwnedBy(member)) {
+        if (!member.isAdmin && !booking.isReservedBy(member) && !booking.isOwnedBy(member)) {
             throw ErrorCode.BOOKING_CANCEL_FORBIDDEN.throwServiceException()
         }
         // 이미 취소된 예약일 경우
@@ -152,7 +148,7 @@ class BookingService(
         val booking = findById(bookingId)
 
         // 인가, 관리자/호텔 사업자만 완료 처리 가능
-        if (!member.isAdmin() && !booking.isOwnedBy(member)) {
+        if (!member.isAdmin && !booking.isOwnedBy(member)) {
             throw ErrorCode.BOOKING_COMPLETE_FORBIDDEN.throwServiceException()
         }
 

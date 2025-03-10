@@ -43,7 +43,7 @@ class PaymentService(
 
     // Uid 생성
     fun generateMerchantUid(): UidResponse {
-        val merchantUid = Ut.random.generateUID(UID_GENERATE_LENGTH)
+        val merchantUid = Ut.Random.generateUID(UID_GENERATE_LENGTH)
         if (paymentRepository.existsByMerchantUid(merchantUid)) {
             throw ErrorCode.PAYMENT_UID_FAIL.throwServiceException()
         }

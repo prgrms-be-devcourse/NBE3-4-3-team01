@@ -64,6 +64,6 @@ class Booking(
     }
 
     fun isOwnedBy(member: Member): Boolean {
-        return member.isBusiness() && hotel.isOwnedBy(member)
+        return member.isBusiness && hotel.isOwnedBy(member)
     }
 }
