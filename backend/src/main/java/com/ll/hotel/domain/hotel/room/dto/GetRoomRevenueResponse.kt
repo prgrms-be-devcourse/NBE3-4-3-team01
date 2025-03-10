@@ -2,7 +2,7 @@ package com.ll.hotel.domain.hotel.room.dto
 
 import jakarta.validation.constraints.NotBlank
 
-data class GetRoomRevenueResponse (
+data class GetRoomRevenueResponse(
     val roomId: Long,
 
     @field:NotBlank

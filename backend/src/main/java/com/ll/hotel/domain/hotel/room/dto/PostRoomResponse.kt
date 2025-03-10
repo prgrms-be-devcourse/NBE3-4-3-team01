@@ -5,7 +5,7 @@ import com.ll.hotel.domain.review.review.dto.response.PresignedUrlsResponse
 import jakarta.validation.constraints.NotBlank
 import java.time.LocalDateTime
 
-data class PostRoomResponse (
+data class PostRoomResponse(
     val roomId: Long,
 
     val hotelId: Long,
@@ -22,7 +22,7 @@ data class PostRoomResponse (
     val createdAt: LocalDateTime,
 
     val urlsResponse: PresignedUrlsResponse?
-){
+) {
     constructor(room: Room, response: PresignedUrlsResponse?) : this(
         room.id,
         room.hotel.id,

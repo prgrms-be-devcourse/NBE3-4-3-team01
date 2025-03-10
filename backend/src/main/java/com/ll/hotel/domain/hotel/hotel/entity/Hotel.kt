@@ -76,7 +76,6 @@ class Hotel(
     }
 
     companion object {
-        @JvmStatic // 이후 삭제
         fun hotelBuild(request: PostHotelRequest, business: Business, hotelOptions: MutableSet<HotelOption>): Hotel {
             return Hotel(
                 hotelName = request.hotelName,

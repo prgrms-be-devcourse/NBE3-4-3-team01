@@ -46,7 +46,7 @@ class RoomService(
             ErrorCode.ROOM_OPTION_NOT_FOUND.throwServiceException()
         }
 
-        val room = Room.roomBuild(hotel, postRoomRequest, bedTypeNumber, roomOptions)
+        val room = Room.roomBuild(hotel, postRoomRequest, bedTypeNumber, roomOptions.toMutableSet())
 
         return try {
             PostRoomResponse(roomRepository.save(room), saveRoomImages(room.id, postRoomRequest.imageExtensions))
@@ -155,7 +155,7 @@ class RoomService(
             ErrorCode.ROOM_OPTION_NOT_FOUND.throwServiceException()
         }
 
-        room.roomOptions = options
+        room.roomOptions = options.toMutableSet()
     }
 
     private fun getHotelById(hotelId: Long): Hotel =

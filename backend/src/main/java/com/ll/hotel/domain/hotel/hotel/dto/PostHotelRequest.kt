@@ -36,7 +36,7 @@ data class PostHotelRequest(
     @field:NotBlank
     val hotelExplainContent: String,
 
-    val imageExtensions : List<String> = emptyList(),
+    val imageExtensions: List<String> = emptyList(),
 
     val hotelOptions: Set<String> = emptySet()
 )

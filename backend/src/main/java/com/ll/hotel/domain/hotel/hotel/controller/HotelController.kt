@@ -3,7 +3,6 @@ package com.ll.hotel.domain.hotel.hotel.controller
 import com.ll.hotel.domain.hotel.hotel.dto.*
 import com.ll.hotel.domain.hotel.hotel.service.HotelService
 import com.ll.hotel.domain.image.type.ImageType
-import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.global.request.Rq
 import com.ll.hotel.global.response.RsData
 import com.ll.hotel.global.validation.GlobalValidation.checkCheckInAndOutDate
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
-import lombok.RequiredArgsConstructor
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -30,7 +28,7 @@ class HotelController(
     @PostMapping
     @Operation(summary = "호텔 등록")
     fun create(@RequestBody postHotelRequest: @Valid PostHotelRequest): RsData<PostHotelResponse> {
-        val actor: Member = this.rq.getActor()
+        val actor = this.rq.getActor()
 
         return RsData.success(
             HttpStatus.CREATED, this.hotelService.createHotel(actor, postHotelRequest)
@@ -46,7 +44,7 @@ class HotelController(
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
-        val actor: Member = this.rq.getActor()
+        val actor = this.rq.getActor()
 
         this.hotelService.saveImages(actor, ImageType.HOTEL, hotelId, urls)
         this.hotelService.updateRoleCookie(request, response, hotelId)
@@ -71,7 +69,7 @@ class HotelController(
         @RequestParam(defaultValue = "2") personal: Int
     ): RsData<PageDto<GetHotelResponse>> {
         checkPageSize(pageSize)
-        checkCheckInAndOutDate(checkInDate!!, checkoutDate!!)
+        checkCheckInAndOutDate(checkInDate, checkoutDate)
 
         return RsData.success(
             HttpStatus.OK,
@@ -123,7 +121,7 @@ class HotelController(
         @PathVariable hotelId: Long,
         @RequestBody request: @Valid PutHotelRequest
     ): RsData<PutHotelResponse> {
-        val actor: Member = this.rq.getActor()
+        val actor = this.rq.getActor()
 
         return RsData.success(
             HttpStatus.OK,
@@ -141,7 +139,7 @@ class HotelController(
                     """
     )
     fun deleteHotel(@PathVariable hotelId: Long) {
-        val actor: Member = this.rq.getActor()
+        val actor = this.rq.getActor()
 
         this.hotelService.deleteHotel(hotelId, actor)
     }
@@ -149,7 +147,7 @@ class HotelController(
     @GetMapping("{hotelId}/revenue")
     @Operation(summary = "호텔 매출 정보")
     fun findHotelRevenue(@PathVariable hotelId: Long): RsData<GetHotelRevenueResponse> {
-        val actor: Member = this.rq.getActor()
+        val actor = this.rq.getActor()
 
         return RsData.success(
             HttpStatus.OK,
@@ -167,7 +165,7 @@ class HotelController(
                     """
     )
     fun findAllHotelOptions(): RsData<GetAllHotelOptionsResponse> {
-        val actor: Member = this.rq.getActor()
+        val actor = this.rq.getActor()
 
         return RsData.success(HttpStatus.OK, this.hotelService.findHotelOptions(actor))
     }

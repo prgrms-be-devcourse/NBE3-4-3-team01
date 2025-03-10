@@ -48,7 +48,6 @@ class Room(
     var roomOptions: MutableSet<RoomOption> = mutableSetOf()
 ) : BaseTime() {
     companion object {
-        @JvmStatic  // 추후 제거
         fun roomBuild(
             hotel: Hotel,
             request: PostRoomRequest,

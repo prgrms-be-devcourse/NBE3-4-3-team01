@@ -34,11 +34,11 @@ class BookingDtoMapper(
         val roomDetailResponse = getRoomDetailResponse(hotelId, roomId)
 
         return BookingFormResponse(
-            hotel = hotelDetailResponse.hotelDetailDto(),
-            room = roomDetailResponse.roomDto(),
+            hotel = hotelDetailResponse.hotelDetailDto,
+            room = roomDetailResponse.roomDto,
             thumbnailUrls = listOf(
-                getThumbnailUrl(hotelDetailResponse.hotelImageUrls()),
-                getThumbnailUrl(roomDetailResponse.roomImageUrls())
+                getThumbnailUrl(hotelDetailResponse.hotelImageUrls),
+                getThumbnailUrl(roomDetailResponse.roomImageUrls)
             ),
             member = MemberDTO.from(member)
         )
@@ -55,10 +55,10 @@ class BookingDtoMapper(
             bookingId = booking.id,
             hotelId = booking.hotel.id,
             roomId = booking.room.id,
-            hotelName = hotelDetailResponse.hotelDetailDto().hotelName(),
-            roomName = roomDetailResponse.roomDto().roomName(),
+            hotelName = hotelDetailResponse.hotelDetailDto.hotelName,
+            roomName = roomDetailResponse.roomDto.roomName,
             memberName = booking.member.memberName,
-            thumbnailUrl = getThumbnailUrl(hotelDetailResponse.hotelImageUrls()),
+            thumbnailUrl = getThumbnailUrl(hotelDetailResponse.hotelImageUrls),
             bookingStatus = booking.bookingStatus,
             amount = booking.payment.amount,
             checkInDate = booking.checkInDate,
@@ -75,11 +75,11 @@ class BookingDtoMapper(
 
         return BookingResponseDetails(
             bookingId = booking.id,
-            hotel = hotelDetailResponse.hotelDetailDto(),
-            room = roomDetailResponse.roomDto(),
+            hotel = hotelDetailResponse.hotelDetailDto,
+            room = roomDetailResponse.roomDto,
             thumbnailUrls = listOf(
-                getThumbnailUrl(hotelDetailResponse.hotelImageUrls()),
-                getThumbnailUrl(roomDetailResponse.roomImageUrls())
+                getThumbnailUrl(hotelDetailResponse.hotelImageUrls),
+                getThumbnailUrl(roomDetailResponse.roomImageUrls)
             ),
             member = MemberDTO.from(booking.member),
             payment = PaymentResponse.from(booking.payment),

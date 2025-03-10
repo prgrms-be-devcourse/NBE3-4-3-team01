@@ -12,7 +12,6 @@ data class BedTypeNumber(
     val bedTriple: Int = 0
 ) {
     companion object {
-        @JvmStatic  // 추후 삭제
         fun fromJson(bedTypeNumber: Map<String, Int>): BedTypeNumber {
             return BedTypeNumber(
                 bedSingle = bedTypeNumber["SINGLE"] ?: 0,

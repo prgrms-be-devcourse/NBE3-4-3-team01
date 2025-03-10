@@ -22,11 +22,11 @@ class RoomController(
     @Operation(summary = "객실 추가")
     fun createRoom(
         @PathVariable hotelId: Long,
-        @RequestBody @Valid postRoomRequest: PostRoomRequest
+        @RequestBody postRoomRequest: @Valid PostRoomRequest
     ): RsData<PostRoomResponse> {
-        val actor = rq.actor
+        val actor = this.rq.actor
 
-        return RsData.success(HttpStatus.CREATED, roomService.createRoom(hotelId, actor, postRoomRequest))
+        return RsData.success(HttpStatus.CREATED, this.roomService.createRoom(hotelId, actor, postRoomRequest))
     }
 
     @PostMapping("/{roomId}/urls")
@@ -37,9 +37,9 @@ class RoomController(
         @PathVariable roomId: Long,
         @RequestBody urls: List<String>
     ) {
-        val actor = rq.actor
+        val actor = this.rq.actor
 
-        roomService.saveImages(actor, ImageType.ROOM, roomId, urls)
+        this.roomService.saveImages(actor, ImageType.ROOM, roomId, urls)
     }
 
     @DeleteMapping("/{roomId}")
@@ -52,21 +52,21 @@ class RoomController(
                     """
     )
     fun deleteRoom(@PathVariable hotelId: Long, @PathVariable roomId: Long) {
-        val actor = rq.actor
+        val actor = this.rq.actor
 
-        roomService.deleteRoom(hotelId, roomId, actor)
+        this.roomService.deleteRoom(hotelId, roomId, actor)
     }
 
     @GetMapping
     @Operation(summary = "객실 목록")
     fun findAllRooms(@PathVariable hotelId: Long): RsData<List<GetRoomResponse>> {
-        return RsData.success(HttpStatus.OK, roomService.findAllRooms(hotelId))
+        return RsData.success(HttpStatus.OK, this.roomService.findAllRooms(hotelId))
     }
 
     @GetMapping("/{roomId}")
     @Operation(summary = "객실 상세 정보")
     fun findRoomDetail(@PathVariable hotelId: Long, @PathVariable roomId: Long): RsData<GetRoomDetailResponse> {
-        return RsData.success(HttpStatus.OK, roomService.findRoomDetail(hotelId, roomId))
+        return RsData.success(HttpStatus.OK, this.roomService.findRoomDetail(hotelId, roomId))
     }
 
     @PutMapping("{roomId}")
@@ -76,9 +76,9 @@ class RoomController(
         @PathVariable roomId: Long,
         @RequestBody request: PutRoomRequest
     ): RsData<PutRoomResponse> {
-        val actor = rq.actor
+        val actor = this.rq.actor
 
-        return RsData.success(HttpStatus.OK, roomService.modifyRoom(hotelId, roomId, actor, request))
+        return RsData.success(HttpStatus.OK, this.roomService.modifyRoom(hotelId, roomId, actor, request))
     }
 
     @GetMapping("/room-option")
@@ -91,8 +91,8 @@ class RoomController(
                     """
     )
     fun findAllRoomOptions(@PathVariable hotelId: Long): RsData<GetAllRoomOptionsResponse> {
-        val actor = rq.actor
+        val actor = this.rq.actor
 
-        return RsData.success(HttpStatus.OK, roomService.findAllRoomOptions(actor))
+        return RsData.success(HttpStatus.OK, this.roomService.findAllRoomOptions(actor))
     }
 }

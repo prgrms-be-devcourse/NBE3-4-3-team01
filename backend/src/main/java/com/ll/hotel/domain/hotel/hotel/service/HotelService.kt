@@ -2,7 +2,6 @@ package com.ll.hotel.domain.hotel.hotel.service
 
 import com.ll.hotel.domain.booking.booking.entity.Booking
 import com.ll.hotel.domain.booking.booking.type.BookingStatus
-import com.ll.hotel.domain.booking.payment.entity.Payment
 import com.ll.hotel.domain.hotel.hotel.dto.*
 import com.ll.hotel.domain.hotel.hotel.entity.Hotel
 import com.ll.hotel.domain.hotel.hotel.entity.Hotel.Companion.hotelBuild
@@ -10,13 +9,12 @@ import com.ll.hotel.domain.hotel.hotel.repository.HotelRepository
 import com.ll.hotel.domain.hotel.hotel.type.HotelStatus
 import com.ll.hotel.domain.hotel.option.repository.HotelOptionRepository
 import com.ll.hotel.domain.hotel.room.dto.GetRoomRevenueResponse
-import com.ll.hotel.domain.hotel.room.dto.RoomWithImageDto
 import com.ll.hotel.domain.hotel.room.entity.Room
 import com.ll.hotel.domain.hotel.room.repository.RoomRepository
 import com.ll.hotel.domain.hotel.room.type.RoomStatus
-import com.ll.hotel.domain.image.entity.Image
 import com.ll.hotel.domain.image.service.ImageService
 import com.ll.hotel.domain.image.type.ImageType
+import com.ll.hotel.domain.member.member.entity.Business
 import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.domain.member.member.repository.BusinessRepository
 import com.ll.hotel.domain.review.review.dto.response.PresignedUrlsResponse
@@ -24,7 +22,7 @@ import com.ll.hotel.global.annotation.BusinessOnly
 import com.ll.hotel.global.aws.s3.S3Service
 import com.ll.hotel.global.exceptions.ErrorCode
 import com.ll.hotel.standard.util.CookieUtil
-import com.ll.hotel.standard.util.Ut.json
+import com.ll.hotel.standard.util.Ut
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -40,13 +38,9 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.time.LocalDate
 import java.util.*
-import java.util.Map
 import java.util.function.Consumer
 import java.util.function.Supplier
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 import kotlin.collections.List
-import kotlin.collections.MutableList
 import kotlin.collections.Set
 import kotlin.collections.set
 import kotlin.math.min
@@ -65,27 +59,27 @@ class HotelService(
     @BusinessOnly
     @Transactional
     fun createHotel(actor: Member, postHotelRequest: PostHotelRequest): PostHotelResponse {
-        val business = businessRepository.findByMember(actor)
-            .orElseThrow { ErrorCode.BUSINESS_NOT_FOUND.throwServiceException() }
+        val business: Business =
+            this.businessRepository.findByMember(actor) ?: ErrorCode.BUSINESS_NOT_FOUND.throwServiceException()
 
         if (business.hotel != null) {
             ErrorCode.BUSINESS_HOTEL_LIMIT_EXCEEDED.throwServiceException()
         }
 
-        val hotelOptions = hotelOptionRepository.findByNameIn(postHotelRequest.hotelOptions)
+        val hotelOptions = this.hotelOptionRepository.findByNameIn(postHotelRequest.hotelOptions)
 
         if (hotelOptions.size != postHotelRequest.hotelOptions.size) {
             ErrorCode.HOTEL_OPTION_NOT_FOUND.throwServiceException()
         }
 
-        val hotel = hotelBuild(postHotelRequest, business, hotelOptions)
+        val hotel = hotelBuild(postHotelRequest, business, hotelOptions.toMutableSet())
 
         return try {
             PostHotelResponse(
-                hotelRepository.save(hotel), this.saveHotelImages(hotel.id, postHotelRequest.imageExtensions)
+                this.hotelRepository.save(hotel), this.saveHotelImages(hotel.id, postHotelRequest.imageExtensions)
             )
-        } catch (e: DataIntegrityViolationException) {
-            throw ErrorCode.HOTEL_EMAIL_ALREADY_EXISTS.throwServiceException()
+        } catch (_: DataIntegrityViolationException) {
+            ErrorCode.HOTEL_EMAIL_ALREADY_EXISTS.throwServiceException()
         }
     }
 
@@ -98,7 +92,7 @@ class HotelService(
             ErrorCode.INVALID_BUSINESS.throwServiceException()
         }
 
-        imageService.saveImages(imageType, hotelId, urls)
+        this.imageService.saveImages(imageType, hotelId, urls)
     }
 
     @Transactional(readOnly = true)
@@ -115,7 +109,7 @@ class HotelService(
 
         val sortField = sortFieldMapping[filterName] ?: "createdAt"
 
-        var direction: Sort.Direction? = null
+        val direction: Sort.Direction?
         if (filterDirection == null) {
             direction = Sort.Direction.DESC
         } else {
@@ -126,10 +120,10 @@ class HotelService(
             }
         }
 
-        val sort = Sort.by(direction!!, sortField)
+        val sort = Sort.by(direction, sortField)
         val pageRequest = PageRequest.of(page - 1, pageSize, sort)
 
-        val hotels = hotelRepository.findAllHotels(
+        val hotels = this.hotelRepository.findAllHotels(
             ImageType.HOTEL, streetAddress, PageRequest.of(0, Int.MAX_VALUE, sort)
         ).content
 
@@ -145,13 +139,13 @@ class HotelService(
 
     @Transactional(readOnly = true)
     fun findHotelDetail(hotelId: Long): GetHotelDetailResponse {
-        val hotel = hotelRepository.findHotelDetail(hotelId)
+        val hotel = this.hotelRepository.findHotelDetail(hotelId)
             .orElseThrow { ErrorCode.HOTEL_NOT_FOUND.throwServiceException() }
 
-        val imageUrls = imageService.findImagesById(ImageType.HOTEL, hotelId)
+        val imageUrls = this.imageService.findImagesById(ImageType.HOTEL, hotelId)
             .map { it.imageUrl }
 
-        val roomDtos = roomRepository.findAllRooms(hotelId, ImageType.ROOM)
+        val roomDtos = this.roomRepository.findAllRooms(hotelId, ImageType.ROOM)
 
         return GetHotelDetailResponse(HotelDetailDto(hotel, roomDtos), imageUrls)
     }
@@ -161,13 +155,13 @@ class HotelService(
         hotelId: Long, checkInDate: LocalDate,
         checkoutDate: LocalDate, personal: Int
     ): GetHotelDetailResponse {
-        val hotel = hotelRepository.findHotelDetail(hotelId)
+        val hotel = this.hotelRepository.findHotelDetail(hotelId)
             .orElseThrow { ErrorCode.HOTEL_NOT_FOUND.throwServiceException() }
 
-        val imageUrls = imageService.findImagesById(ImageType.HOTEL, hotelId)
+        val imageUrls = this.imageService.findImagesById(ImageType.HOTEL, hotelId)
             .map { it.imageUrl }
 
-        val roomDtos = roomRepository.findAllAvailableRooms(hotelId, ImageType.ROOM, personal)
+        val roomDtos = this.roomRepository.findAllAvailableRooms(hotelId, ImageType.ROOM, personal)
             .map { dto ->
                 val room = dto.room
                 room.roomNumber = this.countAvailableRoomNumber(room, checkInDate, checkoutDate, personal)
@@ -190,15 +184,15 @@ class HotelService(
             ErrorCode.HOTEL_EMAIL_ALREADY_EXISTS.throwServiceException()
         }
 
-        modifyIfPresent(request.hotelName, hotel::hotelName, hotel::hotelName::set)
-        modifyIfPresent(request.hotelEmail, hotel::hotelEmail, hotel::hotelEmail::set)
-        modifyIfPresent(request.hotelPhoneNumber, hotel::hotelPhoneNumber, hotel::hotelPhoneNumber::set)
-        modifyIfPresent(request.streetAddress, hotel::streetAddress, hotel::streetAddress::set)
-        modifyIfPresent(request.zipCode, hotel::zipCode, hotel::zipCode::set)
-        modifyIfPresent(request.hotelGrade, hotel::hotelGrade, hotel::hotelGrade::set)
-        modifyIfPresent(request.checkInTime, hotel::checkInTime, hotel::checkInTime::set)
-        modifyIfPresent(request.checkOutTime, hotel::checkOutTime, hotel::checkOutTime::set)
-        modifyIfPresent(request.hotelExplainContent, hotel::hotelExplainContent, hotel::hotelExplainContent::set)
+        this.modifyIfPresent(request.hotelName, hotel::hotelName, hotel::hotelName::set)
+        this.modifyIfPresent(request.hotelEmail, hotel::hotelEmail, hotel::hotelEmail::set)
+        this.modifyIfPresent(request.hotelPhoneNumber, hotel::hotelPhoneNumber, hotel::hotelPhoneNumber::set)
+        this.modifyIfPresent(request.streetAddress, hotel::streetAddress, hotel::streetAddress::set)
+        this.modifyIfPresent(request.zipCode, hotel::zipCode, hotel::zipCode::set)
+        this.modifyIfPresent(request.hotelGrade, hotel::hotelGrade, hotel::hotelGrade::set)
+        this.modifyIfPresent(request.checkInTime, hotel::checkInTime, hotel::checkInTime::set)
+        this.modifyIfPresent(request.checkOutTime, hotel::checkOutTime, hotel::checkOutTime::set)
+        this.modifyIfPresent(request.hotelExplainContent, hotel::hotelExplainContent, hotel::hotelExplainContent::set)
 
         try {
             hotel.hotelStatus = HotelStatus.valueOf(request.hotelStatus.uppercase())
@@ -206,30 +200,35 @@ class HotelService(
             ErrorCode.HOTEL_STATUS_NOT_FOUND.throwServiceException()
         }
 
-        modifyOptions(hotel, request.hotelOptions)
+        this.modifyOptions(hotel, request.hotelOptions)
 
         val deleteImageUrls = request.deleteImageUrls
 
-        imageService.deleteImagesByIdAndUrls(ImageType.HOTEL, hotelId, deleteImageUrls)
-        s3Service.deleteObjectsByUrls(deleteImageUrls)
+        this.imageService.deleteImagesByIdAndUrls(ImageType.HOTEL, hotelId, deleteImageUrls)
+        this.s3Service.deleteObjectsByUrls(deleteImageUrls)
 
         return PutHotelResponse(hotel, this.saveHotelImages(hotelId, request.imageExtensions))
     }
 
-    private fun <T> modifyIfPresent(newValue: T?, getter: Supplier<T>, setter: Consumer<T>) {
-        if (newValue != null && newValue != getter.get()) {
+    private fun <T> modifyIfPresent(newValue: T, getter: Supplier<T>, setter: Consumer<T>) {
+        if (newValue != getter.get()) {
             setter.accept(newValue)
         }
     }
 
     private fun modifyOptions(hotel: Hotel, optionNames: Set<String>) {
+        if (optionNames.isEmpty()) {
+            hotel.hotelOptions = mutableSetOf()
+            return
+        }
+
         val options = hotelOptionRepository.findByNameIn(optionNames)
 
         if (options.size != optionNames.size) {
             ErrorCode.HOTEL_OPTION_NOT_FOUND.throwServiceException()
         }
 
-        hotel.hotelOptions = options
+        hotel.hotelOptions = options.toMutableSet()
     }
 
     @BusinessOnly
@@ -243,15 +242,15 @@ class HotelService(
 
         hotel.hotelStatus = HotelStatus.UNAVAILABLE
 
-        if (imageService.deleteImages(ImageType.HOTEL, hotelId) > 0) {
-            s3Service.deleteAllObjectsById(ImageType.HOTEL, hotelId)
+        if (this.imageService.deleteImages(ImageType.HOTEL, hotelId) > 0) {
+            this.s3Service.deleteAllObjectsById(ImageType.HOTEL, hotelId)
         }
     }
 
     @BusinessOnly
     @Transactional
     fun findRevenue(hotelId: Long, actor: Member): GetHotelRevenueResponse {
-        val hotel = getHotelById(hotelId)
+        val hotel = this.getHotelById(hotelId)
 
         if (!hotel.isOwnedBy(actor)) {
             ErrorCode.INVALID_BUSINESS.throwServiceException()
@@ -278,13 +277,13 @@ class HotelService(
 
     // 호텔 이미지 저장
     private fun saveHotelImages(hotelId: Long, extensions: List<String>): PresignedUrlsResponse {
-        val urls = s3Service.generatePresignedUrls(ImageType.HOTEL, hotelId, extensions)
+        val urls = this.s3Service.generatePresignedUrls(ImageType.HOTEL, hotelId, extensions)
 
         return PresignedUrlsResponse(hotelId, urls)
     }
 
     fun getHotelById(hotelId: Long): Hotel {
-        return hotelRepository.findById(hotelId)
+        return this.hotelRepository.findById(hotelId)
             .orElseThrow { ErrorCode.HOTEL_NOT_FOUND.throwServiceException() }
     }
 
@@ -340,19 +339,19 @@ class HotelService(
     }
 
     fun updateRoleCookie(request: HttpServletRequest, response: HttpServletResponse, hotelId: Long) {
-        val roleCookieOpt = CookieUtil.getCookie(request, "role")
-        roleCookieOpt.ifPresent { roleCookie ->
+        val roleCookie = CookieUtil.getCookie(request, "role")
+        roleCookie?.let { cookie ->
             try {
                 // URL 디코딩 후 JSON 파싱
-                val decodedValue = URLDecoder.decode(roleCookie.value, StandardCharsets.UTF_8)
-                val roleData = json.toMap(decodedValue)
+                val decodedValue = URLDecoder.decode(cookie.value, StandardCharsets.UTF_8)
+                val roleData = Ut.Json.toMap(decodedValue).toMutableMap()
 
                 // 데이터 업데이트
                 roleData["hasHotel"] = true
                 roleData["hotelId"] = hotelId // 새로운 호텔 ID
 
                 // 다시 JSON으로 변환하고 URL 인코딩
-                val updatedEncodedData = URLEncoder.encode(json.toString(roleData), StandardCharsets.UTF_8)
+                val updatedEncodedData = URLEncoder.encode(Ut.Json.toString(roleData), StandardCharsets.UTF_8)
 
                 // 새 쿠키 생성 및 설정
                 val updatedCookie = Cookie("role", updatedEncodedData)
