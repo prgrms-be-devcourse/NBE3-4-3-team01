@@ -42,16 +42,19 @@ export default function JoinPage() {
       setPhoneError("");
       
       const response = await sendSmsVerification(formData.phoneNumber);
+      console.log("SMS 발송 응답:", response);
       
-      if (response.success) {
-        setSmsMessage("인증번호가 발송되었습니다. 3분 내에 입력해주세요.");
-      } else {
-        if (response.message && response.message.includes("더 이상 가입할 수 없습니다")) {
-          setPhoneError(response.message);
+      if (response.data && response.data.success) {
+        setSmsMessage(response.data.message || "인증번호가 발송되었습니다. 3분 내에 입력해주세요.");
+      } else if (response.data) {
+        if (response.data.message && response.data.message.includes("더 이상 가입할 수 없습니다")) {
+          setPhoneError(response.data.message);
           setSmsMessage("");
         } else {
-          setSmsMessage(response.message || "인증번호 발송에 실패했습니다.");
+          setSmsMessage(response.data.message || "인증번호 발송에 실패했습니다.");
         }
+      } else {
+        setSmsMessage("인증번호 발송에 실패했습니다.");
       }
     } catch (error) {
       console.error("SMS 발송 오류:", error);
@@ -73,13 +76,17 @@ export default function JoinPage() {
       setSmsMessage("");
       
       const response = await verifySmsCode(formData.phoneNumber, smsCode);
+      console.log("SMS 인증 응답:", response);
       
-      if (response.success) {
+      if (response.data && response.data.success) {
         setSmsVerified(true);
-        setSmsMessage("인증이 완료되었습니다.");
+        setSmsMessage(response.data.message || "인증이 완료되었습니다.");
+      } else if (response.data) {
+        setSmsVerified(false);
+        setSmsMessage(response.data.message || "인증번호가 일치하지 않습니다.");
       } else {
         setSmsVerified(false);
-        setSmsMessage(response.message || "인증번호가 일치하지 않습니다.");
+        setSmsMessage("인증번호 확인에 실패했습니다.");
       }
     } catch (error) {
       console.error("SMS 인증 오류:", error);
@@ -248,7 +255,7 @@ export default function JoinPage() {
             </div>
 
             {/* SMS 인증번호 입력 */}
-            <div className={smsMessage && !smsMessage.includes("실패") ? "block" : "hidden"}>
+            <div className={smsMessage ? "block" : "hidden"}>
               <label className="block text-sm font-medium text-gray-700">
                 인증번호
               </label>
@@ -271,7 +278,7 @@ export default function JoinPage() {
                   {isVerifyingSms ? "확인 중..." : "확인"}
                 </button>
               </div>
-              <p className={`mt-1 text-sm ${smsVerified ? "text-green-500" : "text-red-500"}`}>
+              <p className={`mt-1 text-sm ${smsVerified ? "text-green-500" : smsMessage.includes("실패") ? "text-red-500" : "text-blue-500"}`}>
                 {smsMessage}
               </p>
             </div>
