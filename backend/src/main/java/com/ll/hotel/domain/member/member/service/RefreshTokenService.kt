@@ -68,7 +68,7 @@ class RefreshTokenService(
         claims["exp"] = expiryDate
         claims["role"] = "ROLE_USER"
         claims["type"] = "refresh"
-        return Ut.jwt.toString(jwtProperties, claims)
+        return Ut.Jwt.toString(jwtProperties, claims)
     }
 
     @Transactional
@@ -77,7 +77,7 @@ class RefreshTokenService(
             log.debug("리프레시 토큰 {}으로 액세스 토큰 갱신 시도 중", refreshToken)
             val token = refreshToken.replace("Bearer ", "").trim()
 
-            val tokenType = Ut.jwt.getClaims(jwtProperties, token).get("type", String::class.java)
+            val tokenType = Ut.Jwt.getClaims(jwtProperties, token).get("type", String::class.java)
             if (tokenType != "refresh") {
                 log.debug("유효하지 않은 토큰 타입: {}", tokenType)
                 REFRESH_TOKEN_INVALID.throwServiceException()
@@ -100,8 +100,8 @@ class RefreshTokenService(
             val email = resultToken.id
             log.debug("토큰에서 이메일 찾음: {}", email)
             
-            val role = Ut.jwt.getClaims(jwtProperties, token).get("role", String::class.java)
-            val newAccessToken = Ut.jwt.toString(jwtProperties, mapOf("sub" to email, "role" to role))
+            val role = Ut.Jwt.getClaims(jwtProperties, token).get("role", String::class.java)
+            val newAccessToken = Ut.Jwt.toString(jwtProperties, mapOf("sub" to email, "role" to role))
 
             resultToken.updateAccessToken(newAccessToken)
             repository.save(resultToken)
