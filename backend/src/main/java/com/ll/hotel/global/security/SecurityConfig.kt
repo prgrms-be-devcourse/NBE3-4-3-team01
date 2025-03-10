@@ -58,7 +58,8 @@ class SecurityConfig(
                         "/api/reviews/**",
                         "/oauth2/authorization/**",
                         "/login/oauth2/code/**",
-                        "/api/*/oauth2/callback"
+                        "/api/*/oauth2/callback",
+                        "/api/sms/**"
                     ).permitAll()
 
                     // 관리자 전용

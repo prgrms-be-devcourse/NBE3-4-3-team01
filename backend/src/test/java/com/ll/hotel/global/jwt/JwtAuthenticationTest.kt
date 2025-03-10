@@ -76,13 +76,13 @@ class JwtAuthenticationTest {
         redisTemplate.connectionFactory?.connection?.flushAll()
 
         // 테스트 멤버 생성
-        testMember = Member.builder()
-                .memberEmail("test@example.com")
-                .memberName("테스트사용자")
-                .memberPhoneNumber("010-1234-5678")
-                .role(Role.USER)
-                .memberStatus(MemberStatus.ACTIVE)
-                .build()
+        testMember = Member(
+            memberEmail = "test@example.com",
+            memberName = "테스트사용자",
+            memberPhoneNumber = "010-1234-5678",
+            role = Role.USER,
+            memberStatus = MemberStatus.ACTIVE
+        )
         
         memberRepository.save(testMember)
         
@@ -101,7 +101,7 @@ class JwtAuthenticationTest {
         
         ReflectionTestUtils.setField(memberService, "rq", rq)
         
-        `when`(rq.actor).thenReturn(testMember)
+        `when`(rq.getActor()).thenReturn(testMember)
         
         SecurityContextHolder.clearContext()
     }
@@ -124,7 +124,7 @@ class JwtAuthenticationTest {
     @DisplayName("토큰 없이 API 호출 시 401 에러")
     fun noToken_Unauthorized() {
         // 인증 실패 케이스 테스트
-        `when`(rq.actor).thenThrow(ServiceException(UNAUTHORIZED.httpStatus, "로그인이 필요합니다."))
+        `when`(rq.getActor()).thenThrow(ServiceException(UNAUTHORIZED.httpStatus, "로그인이 필요합니다."))
         
         // when & then
         mockMvc.perform(get("/api/favorites/me"))

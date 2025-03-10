@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.client.web.AuthorizationRequestReposi
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
 import org.springframework.stereotype.Component
 import org.springframework.util.SerializationUtils
-import java.util.Base64
+import java.util.*
 
 @Component
 class CustomOAuth2AuthorizationRequestRepository : AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
@@ -19,9 +19,8 @@ class CustomOAuth2AuthorizationRequestRepository : AuthorizationRequestRepositor
     }
 
     override fun loadAuthorizationRequest(request: HttpServletRequest): OAuth2AuthorizationRequest? {
-        return CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
-            .map { cookie -> deserialize(cookie.value, OAuth2AuthorizationRequest::class.java) }
-            .orElse(null)
+        val cookie = CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
+        return cookie?.let { deserialize(it.value, OAuth2AuthorizationRequest::class.java) }
     }
 
     override fun saveAuthorizationRequest(

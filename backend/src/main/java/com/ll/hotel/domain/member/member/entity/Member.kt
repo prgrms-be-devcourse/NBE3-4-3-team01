@@ -15,32 +15,32 @@ import java.time.LocalDate
         Index(name = "idx_member_email", columnList = "memberEmail")
     ]
 )
-class Member : BaseTime() {
+class Member(
     @Column(unique = true, nullable = false)
-    var memberEmail: String = ""
+    var memberEmail: String = "",
 
     @Column(nullable = false)
-    var memberName: String = ""
+    var memberName: String = "",
 
     @Column(nullable = false)
-    var memberPhoneNumber: String = ""
+    var memberPhoneNumber: String = "",
 
     @Column(nullable = true)
-    var birthDate: LocalDate? = null
+    var birthDate: LocalDate? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var role: Role = Role.USER
+    var role: Role = Role.USER,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var memberStatus: MemberStatus = MemberStatus.ACTIVE
+    var memberStatus: MemberStatus = MemberStatus.ACTIVE,
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL])
-    var oauths: MutableList<OAuth> = ArrayList()
+    var oauths: MutableList<OAuth> = ArrayList(),
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
-    var business: Business? = null
+    var business: Business? = null,
 
     @ManyToMany
     @JoinTable(
@@ -49,6 +49,7 @@ class Member : BaseTime() {
         inverseJoinColumns = [JoinColumn(name = "hotel_id")]
     )
     var favoriteHotels: MutableSet<Hotel> = HashSet()
+) : BaseTime() {
 
     val isAdmin: Boolean
         get() = this.role == Role.ADMIN
@@ -70,84 +71,6 @@ class Member : BaseTime() {
     fun checkBusiness() {
         if (!this.isBusiness) {
             BUSINESS_ACCESS_FORBIDDEN.throwServiceException()
-        }
-    }
-
-    companion object {
-        @JvmStatic
-        fun builder(): MemberBuilder {
-            return MemberBuilder()
-        }
-    }
-
-    class MemberBuilder {
-        private var memberEmail: String = ""
-        private var memberName: String = ""
-        private var memberPhoneNumber: String = ""
-        private var birthDate: LocalDate? = null
-        private var role: Role = Role.USER
-        private var memberStatus: MemberStatus = MemberStatus.ACTIVE
-        private var oauths: MutableList<OAuth> = ArrayList()
-        private var business: Business? = null
-        private var favoriteHotels: MutableSet<Hotel> = HashSet()
-
-        fun memberEmail(memberEmail: String): MemberBuilder {
-            this.memberEmail = memberEmail
-            return this
-        }
-
-        fun memberName(memberName: String): MemberBuilder {
-            this.memberName = memberName
-            return this
-        }
-
-        fun memberPhoneNumber(memberPhoneNumber: String): MemberBuilder {
-            this.memberPhoneNumber = memberPhoneNumber
-            return this
-        }
-
-        fun birthDate(birthDate: LocalDate?): MemberBuilder {
-            this.birthDate = birthDate
-            return this
-        }
-
-        fun role(role: Role): MemberBuilder {
-            this.role = role
-            return this
-        }
-
-        fun memberStatus(memberStatus: MemberStatus): MemberBuilder {
-            this.memberStatus = memberStatus
-            return this
-        }
-
-        fun oauths(oauths: MutableList<OAuth>): MemberBuilder {
-            this.oauths = oauths
-            return this
-        }
-
-        fun business(business: Business?): MemberBuilder {
-            this.business = business
-            return this
-        }
-
-        fun favoriteHotels(favoriteHotels: MutableSet<Hotel>): MemberBuilder {
-            this.favoriteHotels = favoriteHotels
-            return this
-        }
-
-        fun build(): Member {
-            val member = Member()
-            member.memberEmail = this.memberEmail
-            member.memberName = this.memberName
-            member.memberPhoneNumber = this.memberPhoneNumber
-            member.birthDate = this.birthDate
-            member.role = this.role
-            member.memberStatus = this.memberStatus
-            member.oauths = this.oauths
-            member.business = this.business
-            member.favoriteHotels = this.favoriteHotels
-            return member
         }
     }
 } 

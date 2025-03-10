@@ -69,14 +69,14 @@ class MemberService(
             throw EMAIL_ALREADY_EXISTS.throwServiceException()
         }
 
-        val newMember = Member.builder()
-                .memberEmail(joinRequest.email)
-                .memberName(joinRequest.name)
-                .memberPhoneNumber(joinRequest.phoneNumber)
-                .role(joinRequest.role)
-                .memberStatus(MemberStatus.ACTIVE)
-                .birthDate(joinRequest.birthDate)
-                .build()
+        val newMember = Member(
+            memberEmail = joinRequest.email,
+            memberName = joinRequest.name,
+            memberPhoneNumber = joinRequest.phoneNumber,
+            role = joinRequest.role,
+            memberStatus = MemberStatus.ACTIVE,
+            birthDate = joinRequest.birthDate
+        )
         
         val savedMember = memberRepository.save(newMember)
         
@@ -199,7 +199,7 @@ class MemberService(
 
     @Transactional
     fun addFavorite(hotelId: Long) {
-        val actor = rq.actor
+        val actor = rq.getActor()
             ?: throw UNAUTHORIZED.throwServiceException()
 
         val hotel = hotelRepository.findById(hotelId)
@@ -218,7 +218,7 @@ class MemberService(
 
     @Transactional
     fun removeFavorite(hotelId: Long) {
-        val actor = rq.actor
+        val actor = rq.getActor()
             ?: throw UNAUTHORIZED.throwServiceException()
 
         val hotel = hotelRepository.findById(hotelId)
@@ -236,7 +236,7 @@ class MemberService(
     }
 
     fun getFavoriteHotels(): List<FavoriteDto> {
-        val actor = rq.actor
+        val actor = rq.getActor()
         log.debug("getFavoriteHotels - actor: {}", actor)
         
         if (actor == null) {
@@ -255,7 +255,7 @@ class MemberService(
     }
   
     fun isFavoriteHotel(hotelId: Long): Boolean {
-        val actor = rq.actor
+        val actor = rq.getActor()
             ?: throw UNAUTHORIZED.throwServiceException()
 
         val favorites = actor.favoriteHotels
