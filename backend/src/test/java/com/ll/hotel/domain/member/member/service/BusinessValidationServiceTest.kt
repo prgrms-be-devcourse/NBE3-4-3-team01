@@ -45,9 +45,9 @@ class BusinessValidationServiceTest @Autowired constructor(
         // Then
         assertThat(exception.resultCode)
             .isIn(
-                ErrorCode.INVALID_BUSINESS_INFO,
-                ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE,
-                ErrorCode.EXTERNAL_API_COMMUNICATION_ERROR
+                ErrorCode.INVALID_BUSINESS_INFO.httpStatus,
+                ErrorCode.EXTERNAL_API_UNEXPECTED_RESPONSE.httpStatus,
+                ErrorCode.EXTERNAL_API_COMMUNICATION_ERROR.httpStatus
             )
     }
 }
