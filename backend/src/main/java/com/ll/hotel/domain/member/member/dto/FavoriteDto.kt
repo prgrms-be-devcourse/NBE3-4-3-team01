@@ -35,7 +35,7 @@ data class FavoriteDto(
                 streetAddress = hotel.streetAddress,
                 hotelGrade = hotel.hotelGrade,
 //                hotelStatus = hotel.hotelStatus.value // 코틀린 마이그레이션이 전부 진행되면 변경
-                hotelStatus = hotel.hotelStatus.getValue()
+                hotelStatus = hotel.hotelStatus.name
             )
         }
     }
