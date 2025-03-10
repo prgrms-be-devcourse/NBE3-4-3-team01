@@ -20,6 +20,50 @@ export const logout = async () => {
   }
 };
 
+// SMS 인증번호 발송 API
+export const sendSmsVerification = async (phoneNumber: string) => {
+  try {
+    const response = await fetch("http://localhost:8080/api/sms/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ phoneNumber }),
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+
+    throw new Error(await response.text());
+  } catch (error) {
+    console.error("SMS 인증번호 발송 API 오류:", error);
+    throw error;
+  }
+};
+
+// SMS 인증번호 확인 API
+export const verifySmsCode = async (phoneNumber: string, code: string) => {
+  try {
+    const response = await fetch("http://localhost:8080/api/sms/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ phoneNumber, code }),
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+
+    throw new Error(await response.text());
+  } catch (error) {
+    console.error("SMS 인증번호 확인 API 오류:", error);
+    throw error;
+  }
+};
+
 export const join = async (joinRequest: {
   email: string;
   name: string;
