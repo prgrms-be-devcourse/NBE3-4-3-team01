@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { join } from "@/lib/api/auth/AuthApi";
+import { join, sendSmsVerification, verifySmsCode } from "@/lib/api/auth/AuthApi";
 import { getRoleFromCookie } from "@/lib/utils/CookieUtil";
 
 export default function JoinPage() {
@@ -21,8 +21,82 @@ export default function JoinPage() {
     birthDate: "",
   });
 
+  // SMS 인증 관련 상태
+  const [smsCode, setSmsCode] = useState("");
+  const [isSendingSms, setIsSendingSms] = useState(false);
+  const [isVerifyingSms, setIsVerifyingSms] = useState(false);
+  const [smsVerified, setSmsVerified] = useState(false);
+  const [smsMessage, setSmsMessage] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+
+  // SMS 인증번호 발송
+  const handleSendSms = async () => {
+    if (!formData.phoneNumber) {
+      setPhoneError("전화번호를 입력해주세요.");
+      return;
+    }
+
+    try {
+      setIsSendingSms(true);
+      setSmsMessage("");
+      setPhoneError("");
+      
+      const response = await sendSmsVerification(formData.phoneNumber);
+      
+      if (response.success) {
+        setSmsMessage("인증번호가 발송되었습니다. 3분 내에 입력해주세요.");
+      } else {
+        if (response.message && response.message.includes("더 이상 가입할 수 없습니다")) {
+          setPhoneError(response.message);
+          setSmsMessage("");
+        } else {
+          setSmsMessage(response.message || "인증번호 발송에 실패했습니다.");
+        }
+      }
+    } catch (error) {
+      console.error("SMS 발송 오류:", error);
+      setSmsMessage("인증번호 발송 중 오류가 발생했습니다.");
+    } finally {
+      setIsSendingSms(false);
+    }
+  };
+
+  // SMS 인증번호 확인
+  const handleVerifySms = async () => {
+    if (!formData.phoneNumber || !smsCode) {
+      alert("전화번호와 인증번호를 모두 입력해주세요.");
+      return;
+    }
+
+    try {
+      setIsVerifyingSms(true);
+      setSmsMessage("");
+      
+      const response = await verifySmsCode(formData.phoneNumber, smsCode);
+      
+      if (response.success) {
+        setSmsVerified(true);
+        setSmsMessage("인증이 완료되었습니다.");
+      } else {
+        setSmsVerified(false);
+        setSmsMessage(response.message || "인증번호가 일치하지 않습니다.");
+      }
+    } catch (error) {
+      console.error("SMS 인증 오류:", error);
+      setSmsMessage("인증번호 확인 중 오류가 발생했습니다.");
+    } finally {
+      setIsVerifyingSms(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // SMS 인증 확인
+    if (!smsVerified) {
+      alert("전화번호 인증을 완료해주세요.");
+      return;
+    }
 
     try {
       const response = await join({
@@ -37,7 +111,6 @@ export default function JoinPage() {
 
       console.log("회원가입 응답:", response);
 
-      // 응답이 성공적이면 (OK 메시지가 있거나 resultCode가 200인 경우)
       if (
         response &&
         (response.msg === "OK" || response.resultCode === "200")
@@ -135,24 +208,72 @@ export default function JoinPage() {
               <label className="block text-sm font-medium text-gray-700">
                 전화번호
               </label>
-              <input
-                type="tel"
-                value={formData.phoneNumber}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  const formattedNumber = value
-                    .replace(/[^0-9]/g, "")
-                    .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
-                    .replace(/(\-{1,2})$/g, "");
+              <div className="flex space-x-2">
+                <input
+                  type="tel"
+                  value={formData.phoneNumber}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const formattedNumber = value
+                      .replace(/[^0-9]/g, "")
+                      .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+                      .replace(/(\-{1,2})$/g, "");
 
-                  setFormData({ ...formData, phoneNumber: formattedNumber });
-                }}
-                pattern="01[0-9]-[0-9]{3,4}-[0-9]{4}"
-                placeholder="010-0000-0000"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                required
-              />
-              <p className="mt-1 text-sm text-gray-500">예시: 010-1234-5678</p>
+                    setFormData({ ...formData, phoneNumber: formattedNumber });
+                    setSmsVerified(false);
+                    setPhoneError("");
+                  }}
+                  pattern="01[0-9]-[0-9]{3,4}-[0-9]{4}"
+                  placeholder="010-0000-0000"
+                  className={`mt-1 block w-full px-3 py-2 border ${
+                    phoneError ? "border-red-500" : "border-gray-300"
+                  } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+                  required
+                  disabled={smsVerified}
+                />
+                <button
+                  type="button"
+                  onClick={handleSendSms}
+                  disabled={isSendingSms || smsVerified}
+                  className="mt-1 whitespace-nowrap px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400"
+                >
+                  {isSendingSms ? "발송 중..." : "인증번호 전송"}
+                </button>
+              </div>
+              {phoneError ? (
+                <p className="mt-1 text-sm text-red-600">{phoneError}</p>
+              ) : (
+                <p className="mt-1 text-sm text-gray-500">예시: 010-1234-5678</p>
+              )}
+            </div>
+
+            {/* SMS 인증번호 입력 */}
+            <div className={smsMessage && !smsMessage.includes("실패") ? "block" : "hidden"}>
+              <label className="block text-sm font-medium text-gray-700">
+                인증번호
+              </label>
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={smsCode}
+                  onChange={(e) => setSmsCode(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="인증번호 6자리"
+                  maxLength={6}
+                  disabled={smsVerified}
+                />
+                <button
+                  type="button"
+                  onClick={handleVerifySms}
+                  disabled={isVerifyingSms || smsVerified || !smsCode}
+                  className="mt-1 whitespace-nowrap px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400"
+                >
+                  {isVerifyingSms ? "확인 중..." : "확인"}
+                </button>
+              </div>
+              <p className={`mt-1 text-sm ${smsVerified ? "text-green-500" : "text-red-500"}`}>
+                {smsMessage}
+              </p>
             </div>
 
             <div>
@@ -190,7 +311,8 @@ export default function JoinPage() {
 
           <button
             type="submit"
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400"
+            disabled={!smsVerified}
           >
             가입 완료
           </button>
