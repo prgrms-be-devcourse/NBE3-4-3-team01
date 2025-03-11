@@ -80,18 +80,18 @@ const BookingFormLeft = function ({
               <BedDouble className="w-4 h-4 flex-shrink-0" />
               <span className="truncate">
                 {[
-                  roomDetails.bedTypeNumber.SINGLE > 0 &&
-                    `${roomDetails.bedTypeNumber.SINGLE} 싱글 베드`,
-                  roomDetails.bedTypeNumber.DOUBLE > 0 &&
-                    `${roomDetails.bedTypeNumber.DOUBLE} 더블 베드`,
-                  roomDetails.bedTypeNumber.KING > 0 &&
-                    `${roomDetails.bedTypeNumber.KING} 킹 베드`,
-                  roomDetails.bedTypeNumber.QUEEN > 0 &&
-                    `${roomDetails.bedTypeNumber.QUEEN} 퀸 베드`,
-                  roomDetails.bedTypeNumber.TWIN > 0 &&
-                    `${roomDetails.bedTypeNumber.TWIN} 트윈 베드`,
-                  roomDetails.bedTypeNumber.TRIPLE > 0 &&
-                    `${roomDetails.bedTypeNumber.TRIPLE} 트리플 베드`,
+                  roomDetails.bedTypeNumber.bedSingle > 0 &&
+                    `${roomDetails.bedTypeNumber.bedSingle} 싱글 베드`,
+                  roomDetails.bedTypeNumber.bedDouble > 0 &&
+                    `${roomDetails.bedTypeNumber.bedDouble} 더블 베드`,
+                  roomDetails.bedTypeNumber.bedKing > 0 &&
+                    `${roomDetails.bedTypeNumber.bedKing} 킹 베드`,
+                  roomDetails.bedTypeNumber.bedQueen > 0 &&
+                    `${roomDetails.bedTypeNumber.bedQueen} 퀸 베드`,
+                  roomDetails.bedTypeNumber.bedTwin > 0 &&
+                    `${roomDetails.bedTypeNumber.bedTwin} 트윈 베드`,
+                  roomDetails.bedTypeNumber.bedTriple > 0 &&
+                    `${roomDetails.bedTypeNumber.bedTriple} 트리플 베드`,
                 ]
                   .filter(Boolean)
                   .join(", ")}
