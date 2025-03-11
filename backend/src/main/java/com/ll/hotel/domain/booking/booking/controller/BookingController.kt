@@ -2,7 +2,6 @@ package com.ll.hotel.domain.booking.booking.controller
 
 import com.ll.hotel.domain.booking.booking.dto.*
 import com.ll.hotel.domain.booking.booking.service.BookingService
-import com.ll.hotel.domain.member.member.dto.MemberDTO
 import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.global.mail.MailService
 import com.ll.hotel.global.request.Rq
@@ -45,7 +44,7 @@ class BookingController(
         val booking: BookingResponseDetails = bookingService.create(actor, bookingRequest)
 
         // 예약 확정 메일링
-        mailService.sendBookingConfirmedMail(MemberDTO.from(actor), booking);
+        mailService.sendBookingConfirmedMail(booking);
     }
 
     @GetMapping("/me")
@@ -95,7 +94,7 @@ class BookingController(
         val booking: BookingResponseDetails = bookingService.tryCancel(actor, bookingId)
 
         // 예약 취소 메일링
-        mailService.sendBookingCancelledMail(MemberDTO.from(actor), booking)
+        mailService.sendBookingCancelledMail(booking)
     }
 
     @PatchMapping("/{booking_id}")

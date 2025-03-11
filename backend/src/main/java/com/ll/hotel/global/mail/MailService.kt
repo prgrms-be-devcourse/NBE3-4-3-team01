@@ -7,7 +7,6 @@ import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
-
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -16,7 +15,8 @@ class MailService {
     private lateinit var mailSender: JavaMailSender
 
     @Async
-    fun sendBookingConfirmedMail(member: MemberDTO, booking: BookingResponseDetails) {
+    fun sendBookingConfirmedMail(booking: BookingResponseDetails) {
+        val member: MemberDTO = booking.member
         val subject = "[서울호텔] ${member.memberName} 님의 예약이 확정되었습니다."
         val content = """
             ${member.memberName} 님의 예약 내역입니다.
@@ -34,7 +34,8 @@ class MailService {
     }
 
     @Async
-    fun sendBookingCancelledMail(member: MemberDTO, booking: BookingResponseDetails) {
+    fun sendBookingCancelledMail(booking: BookingResponseDetails) {
+        val member: MemberDTO = booking.member
         val subject = "[서울호텔] ${member.memberName} 님의 예약이 취소되었습니다."
         val content = """
             ${member.memberName} 님의 예약이 ${booking.modifiedAt.format(DateTimeFormatter.ofPattern("MM월 dd일 HH시 mm분"))}에 취소되었습니다.
