@@ -15,7 +15,6 @@ const BookingFormLeft = function ({
 }) {
   const hotelDetails = bookingFormData.hotel;
   const roomDetails = bookingFormData.room;
-  console.log(roomDetails);
 
   return (
     <Card>
