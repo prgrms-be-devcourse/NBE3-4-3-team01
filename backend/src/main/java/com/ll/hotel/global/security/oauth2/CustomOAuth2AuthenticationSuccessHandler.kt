@@ -2,9 +2,10 @@ package com.ll.hotel.global.security.oauth2
 
 import com.ll.hotel.domain.member.member.service.AuthTokenService
 import com.ll.hotel.domain.member.member.service.MemberService
+import com.ll.hotel.global.jwt.dto.JwtProperties
 import com.ll.hotel.global.security.oauth2.dto.SecurityUser
+import com.ll.hotel.standard.util.CookieUtil
 import com.ll.hotel.standard.util.Ut
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -20,7 +21,8 @@ import java.nio.charset.StandardCharsets
 @Component
 class CustomOAuth2AuthenticationSuccessHandler(
     private val authTokenService: AuthTokenService,
-    private val memberService: MemberService
+    private val memberService: MemberService,
+    private val jwtProperties: JwtProperties
 ) : AuthenticationSuccessHandler {
 
     private val log = LoggerFactory.getLogger(CustomOAuth2AuthenticationSuccessHandler::class.java)
@@ -74,27 +76,37 @@ class CustomOAuth2AuthenticationSuccessHandler(
             }
             val encodedRoleData = URLEncoder.encode(Ut.Json.toString(roleData), StandardCharsets.UTF_8)
 
-            val roleCookie = Cookie("role", encodedRoleData)
-            roleCookie.secure = true
-            roleCookie.path = "/"
-            response.addCookie(roleCookie)
-
-            val accessTokenCookie = Cookie("access_token", accessToken)
-            accessTokenCookie.isHttpOnly = true
-            accessTokenCookie.secure = true
-            accessTokenCookie.path = "/"
-            response.addCookie(accessTokenCookie)
+            CookieUtil.addCookie(
+                response, 
+                "role", 
+                encodedRoleData, 
+                (jwtProperties.accessTokenExpiration / 1000).toInt(), 
+                false, 
+                true
+            )
+            
+            CookieUtil.addCookie(
+                response, 
+                "access_token", 
+                accessToken, 
+                (jwtProperties.accessTokenExpiration / 1000).toInt(), 
+                true, 
+                true
+            )
             
             val redirectUrl = UriComponentsBuilder.fromUriString(authorizedRedirectUri)
                 .queryParam("status", "SUCCESS")
                 .build()
                 .toUriString()
             
-            val refreshTokenCookie = Cookie("refresh_token", refreshToken)
-            refreshTokenCookie.isHttpOnly = true
-            refreshTokenCookie.secure = true
-            refreshTokenCookie.path = "/"
-            response.addCookie(refreshTokenCookie)
+            CookieUtil.addCookie(
+                response, 
+                "refresh_token", 
+                refreshToken, 
+                (jwtProperties.refreshTokenExpiration / 1000).toInt(), 
+                true, 
+                true
+            )
             
             response.sendRedirect(redirectUrl)
         }

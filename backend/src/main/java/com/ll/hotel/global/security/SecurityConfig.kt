@@ -3,6 +3,7 @@ package com.ll.hotel.global.security
 import com.ll.hotel.domain.member.member.repository.MemberRepository
 import com.ll.hotel.domain.member.member.service.MemberService
 import com.ll.hotel.global.jwt.JwtAuthFilter
+import com.ll.hotel.global.jwt.dto.JwtProperties
 import com.ll.hotel.global.jwt.exception.JwtExceptionFilter
 import com.ll.hotel.global.security.cors.CorsProperties
 import com.ll.hotel.global.security.oauth2.CustomOAuth2AuthenticationSuccessHandler
@@ -30,7 +31,8 @@ class SecurityConfig(
     private val memberService: MemberService,
     private val memberRepository: MemberRepository,
     private val customOAuth2AuthorizationRequestRepository: CustomOAuth2AuthorizationRequestRepository,
-    private val corsProperties: CorsProperties
+    private val corsProperties: CorsProperties,
+    private val jwtProperties: JwtProperties
 ) {
 
     @Bean
@@ -113,7 +115,7 @@ class SecurityConfig(
                     .failureHandler(oAuth2AuthenticationFailureHandler)
             }
             .addFilterBefore(JwtExceptionFilter(), UsernamePasswordAuthenticationFilter::class.java)
-            .addFilterBefore(JwtAuthFilter(memberService, memberRepository), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(JwtAuthFilter(memberService, memberRepository, jwtProperties), UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
     }
