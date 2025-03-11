@@ -45,6 +45,13 @@ export default function JoinPage() {
       return;
     }
 
+    const phonePattern = /^01[0-9]-\d{3,4}-\d{4}$/;
+    if (!phonePattern.test(formData.phoneNumber)) {
+      showToast("올바른 전화번호 형식이 아닙니다. 예시: 010-0000-0000");
+      setErrorMessage("올바른 전화번호 형식이 아닙니다. 예시: 010-0000-0000");
+      return;
+    }
+
     setIsSendingSms(true);
     setSmsMessage("");
     setErrorMessage("");
@@ -59,6 +66,7 @@ export default function JoinPage() {
       setSmsMessage("인증번호가 발송되었습니다. 3분 내에 입력해주세요.");
       showToast("인증번호가 발송되었습니다.", "success");
     } else {
+      // 백엔드에서 오는 에러 메시지 그대로 표시
       const message = result.data?.message || "인증번호 발송에 실패했습니다.";
       setErrorMessage(message);
       showToast(message);
