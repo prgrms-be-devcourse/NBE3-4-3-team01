@@ -66,7 +66,6 @@ export default function JoinPage() {
       setSmsMessage("인증번호가 발송되었습니다. 3분 내에 입력해주세요.");
       showToast("인증번호가 발송되었습니다.", "success");
     } else {
-      // 백엔드에서 오는 에러 메시지 그대로 표시
       const message = result.data?.message || "인증번호 발송에 실패했습니다.";
       setErrorMessage(message);
       showToast(message);
@@ -159,7 +158,6 @@ export default function JoinPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      {/* 토스트 알림 */}
       {toast.show && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-toast">
           <div className={`px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${
