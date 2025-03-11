@@ -12,7 +12,6 @@ import com.ll.hotel.domain.hotel.room.repository.RoomRepository
 import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.global.exceptions.ErrorCode
 import com.ll.hotel.global.exceptions.ServiceException
-import com.ll.hotel.global.mail.MailService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -27,7 +26,7 @@ class BookingService(
     private val roomRepository: RoomRepository,
     private val hotelRepository: HotelRepository,
     private val paymentService: PaymentService,
-    private val bookingDtoMapper: BookingDtoMapper,
+    private val bookingDtoMapper: BookingDtoMapper
 ) {
     private val log = LoggerFactory.getLogger(BookingService::class.java)
 
