@@ -33,10 +33,20 @@ export const sendSmsVerification = async (phoneNumber: string) => {
 
     const responseText = await response.text();
     let responseData;
-    
+
     try {
       responseData = JSON.parse(responseText);
-    } catch (e) {
+    } catch {
+      if (responseText.includes("더 이상 가입할 수 없습니다")) {
+        return { 
+          isSuccess: false, 
+          data: { 
+            success: false, 
+            message: "해당 휴대폰 번호로는 더 이상 가입할 수 없습니다." 
+          } 
+        };
+      }
+      
       return { 
         isSuccess: false, 
         data: { 
@@ -46,36 +56,24 @@ export const sendSmsVerification = async (phoneNumber: string) => {
       };
     }
     
-    if (response.ok && responseData.resultCode === 'OK') {
+    if (response.ok) {
       return { 
         isSuccess: true, 
         data: responseData 
       };
     }
     
-    let errorMessage = responseText;
+    let errorMessage = responseData.message || responseData.msg || responseData.error;
     
-    if (responseData) {
-      if (responseData.data && responseData.data.message) {
-        errorMessage = responseData.data.message;
-      } else if (responseData.message) {
-        errorMessage = responseData.message;
-      } else if (responseData.msg) {
-        errorMessage = responseData.msg;
-      } else if (responseData.error) {
-        errorMessage = responseData.error;
-      }
-    }
-    
-    if (!errorMessage || errorMessage === '{}') {
-      errorMessage = "인증번호 발송에 실패했습니다.";
+    if (errorMessage && errorMessage.includes("더 이상 가입할 수 없습니다")) {
+      errorMessage = "해당 휴대폰 번호로는 더 이상 가입할 수 없습니다.";
     }
     
     return { 
       isSuccess: false, 
       data: { 
         success: false, 
-        message: errorMessage 
+        message: errorMessage || "인증번호 발송에 실패했습니다." 
       } 
     };
   } catch (error: any) {
@@ -83,7 +81,7 @@ export const sendSmsVerification = async (phoneNumber: string) => {
       isSuccess: false, 
       data: { 
         success: false, 
-        message: error?.message || "인증번호 발송 중 오류가 발생했습니다." 
+        message: "인증번호 발송 중 오류가 발생했습니다." 
       } 
     };
   }
