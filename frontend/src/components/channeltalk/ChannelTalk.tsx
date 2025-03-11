@@ -77,11 +77,9 @@ export default function ChannelTalk() {
     loadChannelTalk();
 
     return () => {
-      console.log("ChannelTalk 컴포넌트 언마운트됨");
       if (window.ChannelIO) {
         window.ChannelIO('shutdown');
         window.ChannelIOInitialized = false;
-        console.log("채널톡 종료됨");
       }
     };
   }, []);
