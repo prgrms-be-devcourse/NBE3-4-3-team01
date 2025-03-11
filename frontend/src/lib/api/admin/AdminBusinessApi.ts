@@ -7,12 +7,22 @@ import { fetchAPI } from "../global/FetchApi";
 import { AdminBusinessRequest } from "@/lib/types/admin/request/AdminBusinessRequest";
 import { FetchOptions } from "@/lib/types/global/FetchOption";
 import { PageDto } from "@/lib/types/PageDto";
+import { BusinessApprovalStatus } from "@/lib/types/business/BusinessApprovalStatus";
 
 export const getAllBusinesses = async (
-  page: number = 0
+  page: number = 0,
+  status: BusinessApprovalStatus | null = null
 ): Promise<PageDto<AdminBusinessSummaryReponse>> => {
+  const queryParams = new URLSearchParams();
+  
+  queryParams.set("page", String(page));
+
+  if (status) {
+    queryParams.set("status", status);
+  }
+
   const data = await fetchAPI<PageDto<AdminBusinessSummaryReponse>>(
-    `http://localhost:8080/api/admin/businesses?page=${page}`
+    `http://localhost:8080/api/admin/businesses?${queryParams.toString()}`
   );
 
   return {
