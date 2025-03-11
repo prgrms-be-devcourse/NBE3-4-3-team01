@@ -21,12 +21,11 @@ import com.ll.hotel.domain.review.review.dto.response.PresignedUrlsResponse
 import com.ll.hotel.global.annotation.BusinessOnly
 import com.ll.hotel.global.aws.s3.S3Service
 import com.ll.hotel.global.exceptions.ErrorCode
+import com.ll.hotel.global.jwt.dto.JwtProperties
 import com.ll.hotel.standard.util.CookieUtil
 import com.ll.hotel.standard.util.Ut
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.hibernate.query.SortDirection
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -41,8 +40,6 @@ import java.time.LocalDate
 import java.util.*
 import java.util.function.Consumer
 import java.util.function.Supplier
-import kotlin.collections.List
-import kotlin.collections.Set
 import kotlin.collections.set
 import kotlin.math.min
 
@@ -54,7 +51,8 @@ class HotelService(
     private val hotelRepository: HotelRepository,
     private val hotelOptionRepository: HotelOptionRepository,
     private val roomRepository: RoomRepository,
-    private val businessRepository: BusinessRepository
+    private val businessRepository: BusinessRepository,
+    private val jwtProperties: JwtProperties
 ) {
 
     @BusinessOnly
@@ -351,13 +349,14 @@ class HotelService(
                 // 다시 JSON으로 변환하고 URL 인코딩
                 val updatedEncodedData = URLEncoder.encode(Ut.Json.toString(roleData), StandardCharsets.UTF_8)
 
-                // 새 쿠키 생성 및 설정
-                val updatedCookie = Cookie("role", updatedEncodedData)
-                updatedCookie.secure = true
-                updatedCookie.path = "/"
-
-                // 응답에 쿠키 추가
-                response.addCookie(updatedCookie)
+                CookieUtil.addCookie(
+                    response, 
+                    "role", 
+                    updatedEncodedData, 
+                    (jwtProperties.accessTokenExpiration / 1000).toInt(), 
+                    false, 
+                    true
+                )
             } catch (e: Exception) {
                 // 에러 처리
                 e.printStackTrace()
