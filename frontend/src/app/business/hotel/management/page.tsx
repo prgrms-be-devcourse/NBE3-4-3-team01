@@ -1,14 +1,14 @@
 "use client";
 
 import HotelDetail from "@/components/business/hotel/HotelDetail";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import HotelImages from "@/components/business/hotel/HotelImages";
+import RoomList from "@/components/business/rooms/RoomList";
+import Navigation from "@/components/navigation/Navigation";
+import { Card, CardContent } from "@/components/ui/card";
 import { findHotelDetail } from "@/lib/api/hotel/BusinessHotelApi";
 import { GetHotelDetailResponse } from "@/lib/types/hotel/GetHotelDetailResponse";
-import { useEffect, useState } from "react";
-import RoomList from "@/components/business/rooms/RoomList";
-import HotelImages from "@/components/business/hotel/HotelImages";
 import { getRoleFromCookie } from "@/lib/utils/CookieUtil";
-import Navigation from "@/components/navigation/Navigation";
+import { useEffect, useState } from "react";
 
 const HotelDetailPage: React.FC = () => {
   const cookie = getRoleFromCookie();

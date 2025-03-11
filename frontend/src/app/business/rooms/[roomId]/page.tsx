@@ -1,26 +1,26 @@
 "use client";
 
+import Navigation from "@/components/navigation/Navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { uploadImagesToS3 } from "@/lib/api/aws/AwsS3Api";
 import {
   findAllRoomOptions,
   findRoomDetail,
   modifyRoom,
   saveRoomImageUrls,
 } from "@/lib/api/hotel/room/BusinessRoomApi";
+import { PresignedUrlsResponse } from "@/lib/types/review/PresignedUrlsResponse";
+import { BED_TYPES, BedTypeNumber } from "@/lib/types/room/BedTypeNumber";
+import { GetAllRoomOptionsResponse } from "@/lib/types/room/GetAllRoomOptionsResponse";
+import { PutRoomRequest } from "@/lib/types/room/PutRoomRequest";
+import { getRoleFromCookie } from "@/lib/utils/CookieUtil";
+import { MoveLeft, XCircle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BED_TYPES, BedTypeNumber } from "@/lib/types/room/BedTypeNumber";
-import { PutRoomRequest } from "@/lib/types/room/PutRoomRequest";
-import { MoveLeft, XCircle } from "lucide-react";
-import { uploadImagesToS3 } from "@/lib/api/aws/AwsS3Api";
 import { PutRoomResponse } from "../../../../lib/types/room/PutRoomResponse";
-import { PresignedUrlsResponse } from "@/lib/types/review/PresignedUrlsResponse";
-import { GetAllRoomOptionsResponse } from "@/lib/types/room/GetAllRoomOptionsResponse";
-import { getRoleFromCookie } from "@/lib/utils/CookieUtil";
-import Navigation from "@/components/navigation/Navigation";
 
 export default function ModifyRoomPage() {
   const cookie = getRoleFromCookie();
@@ -30,7 +30,7 @@ export default function ModifyRoomPage() {
   const [roomId, setRoomId] = useState(Number(params.roomId));
   const [roomName, setRoomName] = useState("");
   const [roomNumber, setRoomNumber] = useState(1);
-  const [basePrice, setBasePrice] = useState(50000);
+  const [basePrice, setBasePrice] = useState(0);
   const [standardNumber, setStandardNumber] = useState(1);
   const [maxNumber, setMaxNumber] = useState(1);
   const [bedTypeNumber, setBedTypeNumber] = useState<BedTypeNumber>({
@@ -144,6 +144,11 @@ export default function ModifyRoomPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (Object.values(bedTypeNumber).every((value) => value === 0)) {
+      alert("적어도 하나 이상의 침대 유형을 입력해주세요.");
+      return;
+    }
+
     const requestBody: PutRoomRequest = {
       roomName,
       roomNumber,
@@ -163,19 +168,17 @@ export default function ModifyRoomPage() {
         roomId,
         requestBody
       );
-      console.log("ModifyRoom response", response);
-      console.log("responseUrl", response.urlResponse);
 
-      const preSigendUrlsResponse: PresignedUrlsResponse = response.urlResponse;
+      const presignedUrlResponse: PresignedUrlsResponse = response.urlResponse;
 
-      console.log("ModifyRoom response", response);
-      console.log("PresignedUrlsResponse", presignedUrls);
+      if (presignedUrlResponse.presignedUrls.length === 0) {
+        alert("객실이 성공적으로 수정되었습니다.");
+        router.push("/business/hotel/management");
+      }
 
       setRoomId(response.roomId);
-      setPresignedUrls(preSigendUrlsResponse.presignedUrls);
+      setPresignedUrls(presignedUrlResponse.presignedUrls);
       console.log(presignedUrls);
-      alert("객실이 성공적으로 수정되었습니다.");
-      router.push("/business/hotel/management");
     } catch (error) {
       console.error("Error:", error);
       alert(error);
@@ -193,7 +196,10 @@ export default function ModifyRoomPage() {
     try {
       await uploadImagesToS3(presignedUrls, images);
       await saveImageUrls();
+
       console.log("이미지가 성공적으로 업로드되었습니다.");
+      alert("객실이 성공적으로 수정되었습니다.");
+      router.push("/business/hotel/management");
     } catch (error) {
       console.error("Error:", error);
       alert(error);
@@ -267,6 +273,7 @@ export default function ModifyRoomPage() {
                   id="basePrice"
                   type="number"
                   min="0"
+                  step="1000"
                   value={basePrice}
                   onChange={(e) => setBasePrice(Number(e.target.value))}
                   required

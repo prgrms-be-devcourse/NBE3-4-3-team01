@@ -22,7 +22,7 @@ class RoomController(
     @Operation(summary = "객실 추가")
     fun createRoom(
         @PathVariable hotelId: Long,
-        @RequestBody postRoomRequest: @Valid PostRoomRequest
+        @RequestBody @Valid postRoomRequest: PostRoomRequest
     ): RsData<PostRoomResponse> {
         val actor = this.rq.getActor()
 
@@ -74,7 +74,7 @@ class RoomController(
     fun modify(
         @PathVariable hotelId: Long,
         @PathVariable roomId: Long,
-        @RequestBody request: PutRoomRequest
+        @RequestBody @Valid request: PutRoomRequest
     ): RsData<PutRoomResponse> {
         val actor = this.rq.getActor()
 
