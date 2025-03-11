@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -89,7 +90,7 @@ class AdminHotelServiceTest @Autowired constructor(
         val expectedPages = (totalItems + pageSize - 1) / pageSize
 
         // When
-        val result = adminHotelService.findAllPaged(page)
+        val result = adminHotelService.findAllPaged(page, status = null)
 
         // Then
         assertThat(result).isNotNull()
@@ -107,7 +108,7 @@ class AdminHotelServiceTest @Autowired constructor(
 
         // When
         val exception = assertThrows<ServiceException> {
-            adminHotelService.findAllPaged(invalidPage)
+            adminHotelService.findAllPaged(invalidPage, status = null)
         }
 
         // Then
@@ -131,14 +132,35 @@ class AdminHotelServiceTest @Autowired constructor(
     }
 
     @Test
-    @DisplayName("호텔 조회 - 존재하지 않는 호텔 조회 시 예외 발생")
-    fun `should throw exception when hotel not found`() {
+    @DisplayName("호텔 페이지 조회 - 승인 대기")
+    fun `should return only PENDING status hotels`() {
         // Given
-        val invalidHotelId = hotelRepository.count() + 1
+        val page = 0
+        val pageSize = 10
+        val pageable = PageRequest.of(page, pageSize)
 
         // When
+        val result = adminHotelService.findAllPaged(page, status = null)
+        val saved = hotelRepository.findByHotelStatus(HotelStatus.PENDING, pageable)
+
+        // Then
+        assertThat(result).isNotNull()
+        assertThat(result.totalItems).isEqualTo(saved.totalElements)
+        assertThat(result.totalPages.toInt()).isEqualTo(saved.totalPages)
+
+        val resultStatus = result.items.map { it.status }
+        val savedStatus = saved.content.map { it.hotelStatus }
+
+        assertThat(resultStatus).containsOnly(HotelStatus.PENDING)
+        assertThat(resultStatus).isEqualTo(savedStatus)
+    }
+
+    @Test
+    @DisplayName("호텔 조회 - 존재하지 않는 호텔 조회 시 예외 발생")
+    fun `should throw exception when hotel not found`() {
+        // When
         val exception = assertThrows<ServiceException> {
-            adminHotelService.findById(invalidHotelId)
+            adminHotelService.findById(Long.MAX_VALUE)
         }
 
         // Then
