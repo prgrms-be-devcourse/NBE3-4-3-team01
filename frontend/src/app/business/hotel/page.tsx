@@ -1,25 +1,25 @@
 "use client";
 
-import { PostHotelRequest } from "@/lib/types/hotel/PostHotelRequest";
-import React, { useEffect, useState } from "react";
-import { PresignedUrlsResponse } from "@/lib/types/review/PresignedUrlsResponse";
+import Navigation from "@/components/navigation/Navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { uploadImagesToS3 } from "@/lib/api/aws/AwsS3Api";
 import {
   createHotel,
   findAllHotelOptions,
   saveHotelImageUrls,
 } from "@/lib/api/hotel/BusinessHotelApi";
-import { PostHotelResponse } from "@/lib/types/hotel/PostHotelResponse";
-import { uploadImagesToS3 } from "@/lib/api/aws/AwsS3Api";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { GetAllHotelOptionResponse } from "@/lib/types/hotel/GetAllHotelOptionResponse";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { PostHotelRequest } from "@/lib/types/hotel/PostHotelRequest";
+import { PostHotelResponse } from "@/lib/types/hotel/PostHotelResponse";
+import { PresignedUrlsResponse } from "@/lib/types/review/PresignedUrlsResponse";
 import { MoveLeft, Star, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Navigation from "@/components/navigation/Navigation";
+import React, { useEffect, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function CreateHotelPage() {
   const router = useRouter();
@@ -137,7 +137,14 @@ export default function CreateHotelPage() {
 
     try {
       const response: PostHotelResponse = await createHotel(requestBody);
-      const presignedUrlResponse: PresignedUrlsResponse = response.urlsResponse;
+      const presignedUrlResponse: PresignedUrlsResponse =
+        response.urlsResponse ?? { presignedUrls: [] };
+
+      if (presignedUrlResponse.presignedUrls.length === 0) {
+        alert("호텔이 성공적으로 등록되었습니다.");
+        router.push("/business/hotel/management");
+      }
+
       setPresignedUrls(presignedUrlResponse.presignedUrls);
       setHotelId(presignedUrlResponse.reviewId);
     } catch (error) {
@@ -155,11 +162,6 @@ export default function CreateHotelPage() {
 
   // PresignedUrls 를 사용하여 이미지 업로드
   const submitImages = async () => {
-    if (presigendUrls.length === 0) {
-      alert("이미지 업로드 URL을 가져오지 못했습니다.");
-      return;
-    }
-
     try {
       await uploadImagesToS3(presigendUrls, images);
       await saveImageUrls();

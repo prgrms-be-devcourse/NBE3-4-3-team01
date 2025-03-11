@@ -1,34 +1,34 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import Navigation from "@/components/navigation/Navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { uploadImagesToS3 } from "@/lib/api/aws/AwsS3Api";
 import {
   createRoom,
   findAllRoomOptions,
   saveRoomImageUrls,
 } from "@/lib/api/hotel/room/BusinessRoomApi";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { BED_TYPES, BedTypeNumber } from "@/lib/types/room/BedTypeNumber";
-import { PostRoomResponse } from "@/lib/types/room/PostRoomResponse";
-import { PostRoomRequest } from "@/lib/types/room/PostRoomRequest";
-import { GetAllRoomOptionsResponse } from "@/lib/types/room/GetAllRoomOptionsResponse";
-import { uploadImagesToS3 } from "@/lib/api/aws/AwsS3Api";
 import { PresignedUrlsResponse } from "@/lib/types/review/PresignedUrlsResponse";
-import { useRouter } from "next/navigation";
-import { MoveLeft, XCircle } from "lucide-react";
+import { BED_TYPES, BedTypeNumber } from "@/lib/types/room/BedTypeNumber";
+import { GetAllRoomOptionsResponse } from "@/lib/types/room/GetAllRoomOptionsResponse";
+import { PostRoomRequest } from "@/lib/types/room/PostRoomRequest";
+import { PostRoomResponse } from "@/lib/types/room/PostRoomResponse";
 import { getRoleFromCookie } from "@/lib/utils/CookieUtil";
-import Navigation from "@/components/navigation/Navigation";
+import { MoveLeft, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export default function CreateRoomPage() {
   const cookie = getRoleFromCookie();
   const router = useRouter();
   const [roomName, setRoomName] = useState("");
-  const [roomNumber, setRoomNumber] = useState(1);
-  const [basePrice, setBasePrice] = useState(50000);
-  const [standardNumber, setStandardNumber] = useState(1);
-  const [maxNumber, setMaxNumber] = useState(1);
+  const [roomNumber, setRoomNumber] = useState(0);
+  const [basePrice, setBasePrice] = useState(0);
+  const [standardNumber, setStandardNumber] = useState(0);
+  const [maxNumber, setMaxNumber] = useState(0);
   const [bedTypeNumber, setBedTypeNumber] = useState<BedTypeNumber>({
     SINGLE: 0,
     DOUBLE: 0,
@@ -98,6 +98,11 @@ export default function CreateRoomPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (Object.values(bedTypeNumber).every((value) => value === 0)) {
+      alert("적어도 하나 이상의 침대 유형을 입력해주세요.");
+      return;
+    }
+
     const requestBody: PostRoomRequest = {
       roomName,
       roomNumber: Number(roomNumber),
@@ -117,12 +122,15 @@ export default function CreateRoomPage() {
         Number(hotelId),
         requestBody
       );
-
       const presignedUrlResponse: PresignedUrlsResponse = response.urlsResponse;
+
+      if (presignedUrlResponse.presignedUrls.length === 0) {
+        alert("객실이 성공적으로 등록되었습니다.");
+        router.push("/business/hotel/management");
+      }
+
       setPresignedUrls(presignedUrlResponse.presignedUrls);
       setRoomId(presignedUrlResponse.reviewId);
-      alert("객실이 성공적으로 등록되었습니다.");
-      router.push("/business/hotel/management");
     } catch (error) {
       console.error("Error: ", error);
       alert(error);
@@ -138,15 +146,13 @@ export default function CreateRoomPage() {
 
   // PresignedUrls 를 사용하여 이미지 업로드
   const submitImages = async () => {
-    if (presigendUrls.length === 0) {
-      alert("이미지 업로드 URL을 가져오지 못했습니다.");
-      return;
-    }
-
     try {
       await uploadImagesToS3(presigendUrls, images);
       await saveImageUrls();
+
       console.log("이미지가 성공적으로 업로드 되었습니다.");
+      alert("객실이 성공적으로 등록되었습니다.");
+      router.push("/business/hotel/management");
     } catch (error) {
       console.error("Error: ", error);
       alert(error);
@@ -221,6 +227,7 @@ export default function CreateRoomPage() {
                   id="basePrice"
                   type="number"
                   min="0"
+                  step="1000"
                   value={basePrice}
                   onChange={(e) => setBasePrice(Number(e.target.value))}
                   required

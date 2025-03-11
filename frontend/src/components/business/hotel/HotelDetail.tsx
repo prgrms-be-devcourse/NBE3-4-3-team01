@@ -156,7 +156,13 @@ const HotelDetail: React.FC<HotelDetailProps> = ({ hotel }) => {
           {
             icon: FaStar,
             label: "호텔 등급",
-            value: `${hotel.hotelGrade}성급`,
+            value: (
+              <span className="flex items-center">
+                {Array.from({ length: hotel.hotelGrade }).map((_, i) => (
+                  <FaStar key={i} className="text-yellow-500 text-xl" />
+                ))}
+              </span>
+            ),
             color: "text-yellow-500",
           },
           {

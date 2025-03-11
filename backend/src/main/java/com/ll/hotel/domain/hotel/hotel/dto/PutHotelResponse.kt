@@ -20,7 +20,7 @@ data class PutHotelResponse(
 
     val urlsResponse: PresignedUrlsResponse?
 ) {
-    constructor(hotel: Hotel, response: PresignedUrlsResponse) : this(
+    constructor(hotel: Hotel, response: PresignedUrlsResponse?) : this(
         hotel.business.id,
         hotel.id,
         hotel.hotelName,

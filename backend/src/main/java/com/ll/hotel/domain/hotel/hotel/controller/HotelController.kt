@@ -27,12 +27,20 @@ class HotelController(
 ) {
     @PostMapping
     @Operation(summary = "호텔 등록")
-    fun create(@RequestBody postHotelRequest: @Valid PostHotelRequest): RsData<PostHotelResponse> {
+    fun create(
+        @RequestBody @Valid postHotelRequest: PostHotelRequest,
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ): RsData<PostHotelResponse> {
         val actor = this.rq.getActor()
 
-        return RsData.success(
-            HttpStatus.CREATED, this.hotelService.createHotel(actor, postHotelRequest)
-        )
+        val postHotelResponse = this.hotelService.createHotel(actor, postHotelRequest)
+
+        if (postHotelRequest.imageExtensions.isEmpty()) {
+            this.hotelService.updateRoleCookie(request, response, postHotelResponse.hotelId)
+        }
+
+        return RsData.success(HttpStatus.CREATED, postHotelResponse)
     }
 
     @PostMapping("/{hotelId}/urls")
@@ -119,7 +127,7 @@ class HotelController(
     @Operation(summary = "호텔 수정")
     fun modifyHotel(
         @PathVariable hotelId: Long,
-        @RequestBody request: @Valid PutHotelRequest
+        @RequestBody @Valid request: PutHotelRequest
     ): RsData<PutHotelResponse> {
         val actor = this.rq.getActor()
 

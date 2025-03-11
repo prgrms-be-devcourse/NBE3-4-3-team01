@@ -1,8 +1,12 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { join, sendSmsVerification, verifySmsCode } from "@/lib/api/auth/AuthApi";
+import {
+  join,
+  sendSmsVerification,
+  verifySmsCode,
+} from "@/lib/api/auth/AuthApi";
 import { getRoleFromCookie } from "@/lib/utils/CookieUtil";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 export default function JoinPage() {
   const router = useRouter();
@@ -28,7 +32,7 @@ export default function JoinPage() {
   const [smsMessage, setSmsMessage] = useState("");
   const [showSmsInput, setShowSmsInput] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   const showToast = (message: string, type: string = "error") => {
@@ -56,12 +60,12 @@ export default function JoinPage() {
     setSmsMessage("");
     setErrorMessage("");
     setShowSmsInput(false);
-    
+
     const result = await sendSmsVerification(formData.phoneNumber);
-    
+
     setIsSendingSms(false);
-    
-    if (result.isSuccess && result.data?.resultCode === 'OK') {
+
+    if (result.isSuccess && result.data?.resultCode === "OK") {
       setShowSmsInput(true);
       setSmsMessage("인증번호가 발송되었습니다. 3분 내에 입력해주세요.");
       showToast("인증번호가 발송되었습니다.", "success");
@@ -83,9 +87,9 @@ export default function JoinPage() {
     try {
       setIsVerifyingSms(true);
       setSmsMessage("");
-      
+
       const response = await verifySmsCode(formData.phoneNumber, smsCode);
-      
+
       if (response.data && response.data.success) {
         setSmsVerified(true);
         setSmsMessage(response.data.message || "인증이 완료되었습니다.");
@@ -160,11 +164,26 @@ export default function JoinPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       {toast.show && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-toast">
-          <div className={`px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${
-            toast.type === "error" ? "bg-red-500 text-white" : "bg-green-500 text-white"
-          }`}>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <div
+            className={`px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 ${
+              toast.type === "error"
+                ? "bg-red-500 text-white"
+                : "bg-green-500 text-white"
+            }`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <span>{toast.message}</span>
           </div>
@@ -241,17 +260,17 @@ export default function JoinPage() {
                   onChange={(e) => {
                     const value = e.target.value;
                     let numericValue = value.replace(/[^0-9]/g, "");
-                    
+
                     numericValue = numericValue.substring(0, 11);
-                    
+
                     let formattedNumber = "";
                     if (numericValue.length > 0) {
                       formattedNumber += numericValue.substring(0, 3);
-                      
+
                       if (numericValue.length > 3) {
                         formattedNumber += "-" + numericValue.substring(3, 7);
                       }
-                      
+
                       if (numericValue.length > 7) {
                         formattedNumber += "-" + numericValue.substring(7, 11);
                       }
@@ -285,7 +304,9 @@ export default function JoinPage() {
                 </p>
               )}
               {!errorMessage && (
-                <p className="mt-1 text-sm text-gray-500">예시: 010-1234-5678</p>
+                <p className="mt-1 text-sm text-gray-500">
+                  예시: 010-1234-5678
+                </p>
               )}
             </div>
 
@@ -314,7 +335,13 @@ export default function JoinPage() {
                     {isVerifyingSms ? "확인 중..." : "확인"}
                   </button>
                 </div>
-                <p className={`mt-2 text-sm ${smsVerified ? "text-green-600 bg-green-50 p-2 rounded-md border border-green-200" : "text-blue-600 bg-blue-50 p-2 rounded-md border border-blue-200"}`}>
+                <p
+                  className={`mt-2 text-sm ${
+                    smsVerified
+                      ? "text-green-600 bg-green-50 p-2 rounded-md border border-green-200"
+                      : "text-blue-600 bg-blue-50 p-2 rounded-md border border-blue-200"
+                  }`}
+                >
                   {smsMessage}
                 </p>
               </div>
@@ -374,7 +401,7 @@ export default function JoinPage() {
             transform: translate(-50%, 0);
           }
         }
-        
+
         .animate-toast {
           animation: slideDown 0.3s ease-out forwards;
         }
