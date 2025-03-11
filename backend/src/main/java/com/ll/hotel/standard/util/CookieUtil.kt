@@ -10,11 +10,13 @@ object CookieUtil {
         return cookies.firstOrNull { it.name == name }
     }
 
-    fun addCookie(response: HttpServletResponse, name: String, value: String, maxAge: Int) {
-        val cookie: Cookie = Cookie(name, value).apply {
+    fun addCookie(response: HttpServletResponse, name: String, value: String, maxAge: Int, 
+                  isHttpOnly: Boolean = true, isSecure: Boolean = false) {
+        val cookie = Cookie(name, value).apply {
             path = "/"
-            isHttpOnly = true
+            this.isHttpOnly = isHttpOnly
             this.maxAge = maxAge
+            this.secure = isSecure
         }
         response.addCookie(cookie)
     }
