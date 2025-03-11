@@ -13,13 +13,12 @@ import com.ll.hotel.global.request.Rq
 import com.ll.hotel.global.response.RsData
 import com.ll.hotel.global.security.oauth2.entity.OAuth
 import com.ll.hotel.global.security.oauth2.repository.OAuthRepository
-import com.ll.hotel.standard.util.Ut
 import com.ll.hotel.standard.util.CookieUtil
-import jakarta.servlet.http.Cookie
+import com.ll.hotel.standard.util.Ut
+import com.ll.hotel.standard.util.logger
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
-import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -42,7 +41,7 @@ class MemberService(
     private val rq: Rq
 ) {
     companion object {
-        private val log = LoggerFactory.getLogger(MemberService::class.java)
+        private val log = logger()
         private const val LOGOUT_PREFIX = "LOGOUT:"
     }
 
