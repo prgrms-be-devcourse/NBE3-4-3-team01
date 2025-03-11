@@ -1,6 +1,7 @@
 package com.ll.hotel.domain.member.admin.service
 
 import com.ll.hotel.domain.hotel.hotel.repository.HotelRepository
+import com.ll.hotel.domain.hotel.hotel.type.HotelStatus
 import com.ll.hotel.domain.member.admin.dto.request.AdminHotelRequest
 import com.ll.hotel.domain.member.admin.dto.response.AdminHotelResponse
 import com.ll.hotel.global.exceptions.ErrorCode
@@ -13,12 +14,17 @@ import org.springframework.stereotype.Service
 class AdminHotelService(
     private val hotelRepository: HotelRepository
 ) {
-    fun findAllPaged(page: Int): PageDto<AdminHotelResponse.Summary> {
+    fun findAllPaged(page: Int, status: HotelStatus?): PageDto<AdminHotelResponse.Summary> {
         val pageable = PageRequest.of(page, 10)
-        val pagedHotel = hotelRepository.findAll(pageable)
 
-        if (pagedHotel.hasContent().not()) {
-            ErrorCode.PAGE_NOT_FOUND.throwServiceException()
+        val pagedHotel = if (status == null) {
+            hotelRepository.findAll(pageable)
+        } else {
+            hotelRepository.findByHotelStatus(status, pageable)
+        }
+
+        if (page >= pagedHotel.totalPages) {
+            throw ErrorCode.PAGE_NOT_FOUND.throwServiceException()
         }
 
         val pagedHotelSummaries = pagedHotel.map(AdminHotelResponse.Summary::from)

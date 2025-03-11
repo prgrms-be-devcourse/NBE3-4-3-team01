@@ -3,6 +3,7 @@ package com.ll.hotel.domain.member.admin.controller
 import com.ll.hotel.domain.member.admin.dto.request.AdminBusinessRequest
 import com.ll.hotel.domain.member.admin.dto.response.AdminBusinessResponse
 import com.ll.hotel.domain.member.admin.service.AdminBusinessService
+import com.ll.hotel.domain.member.member.type.BusinessApprovalStatus
 import com.ll.hotel.global.response.RsData
 import com.ll.hotel.standard.page.dto.PageDto
 import io.swagger.v3.oas.annotations.Operation
@@ -19,9 +20,10 @@ class AdminBusinessController(
 ) {
     @Operation(summary = "사업자 전체 조회")
     @GetMapping
-    fun getAll(@RequestParam(value = "page", defaultValue = "0") page: Int
+    fun getAll(@RequestParam(value = "page", defaultValue = "0") page: Int,
+               @RequestParam(value = "status", required = false) status: BusinessApprovalStatus?
     ): RsData<PageDto<AdminBusinessResponse.Summary>> =
-        RsData.success(HttpStatus.OK, adminBusinessService.findAllPaged(page))
+        RsData.success(HttpStatus.OK, adminBusinessService.findAllPaged(page, status))
 
     @Operation(summary = "사업자 단건 조회")
     @GetMapping("/{id}")

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -67,12 +68,37 @@ class AdminBusinessServiceTest @Autowired constructor(
         val expectedPages = (totalItems + pageSize - 1) / pageSize
 
         // When
-        val result = adminBusinessService.findAllPaged(page)
+        val result = adminBusinessService.findAllPaged(page, status = null)
 
         // Then
         assertThat(result).isNotNull()
         assertThat(result.totalItems).isEqualTo(businessRepository.count())
         assertThat(result.totalPages).isEqualTo(expectedPages)
+    }
+
+
+    @Test
+    @DisplayName("사업자 페이지 조회 - 승인 대기")
+    fun `should return only PENDING status businesses`() {
+        // Given
+        val page = 0
+        val pageSize = 10
+        val pageable = PageRequest.of(page, pageSize)
+
+        // When
+        val result = adminBusinessService.findAllPaged(page, BusinessApprovalStatus.PENDING)
+        val saved = businessRepository.findByApprovalStatus(BusinessApprovalStatus.PENDING, pageable)
+
+        // Then
+        assertThat(result).isNotNull()
+        assertThat(result.totalItems).isEqualTo(saved.totalElements)
+        assertThat(result.totalPages.toInt()).isEqualTo(saved.totalPages)
+
+        val resultStatus = result.items.map { it.approvalStatus }
+        val savedStatus = saved.content.map { it.approvalStatus }
+
+        assertThat(resultStatus).containsOnly(BusinessApprovalStatus.PENDING)
+        assertThat(resultStatus).isEqualTo(savedStatus)
     }
 
     @Test
@@ -85,7 +111,7 @@ class AdminBusinessServiceTest @Autowired constructor(
 
         // When
         val exception = assertThrows<ServiceException> {
-            adminBusinessService.findAllPaged(invalidPage)
+            adminBusinessService.findAllPaged(invalidPage, status = null)
         }
 
         // Then
@@ -111,12 +137,9 @@ class AdminBusinessServiceTest @Autowired constructor(
     @Test
     @DisplayName("사업자 조회 - 존재하지 않는 사업자 조회 시 예외 발생")
     fun `should throw exception when business not found`() {
-        // Given
-        val invalidBusinessId = businessRepository.count() + 1
-
         // When
         val exception = assertThrows<ServiceException> {
-            adminBusinessService.findById(invalidBusinessId)
+            adminBusinessService.findById(Long.MAX_VALUE)
         }
 
         // Then

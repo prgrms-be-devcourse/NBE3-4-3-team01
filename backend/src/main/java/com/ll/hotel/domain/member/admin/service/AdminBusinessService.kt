@@ -4,6 +4,7 @@ import com.ll.hotel.domain.member.admin.dto.request.AdminBusinessRequest
 import com.ll.hotel.domain.member.admin.dto.response.AdminBusinessResponse
 import com.ll.hotel.domain.member.member.entity.Role
 import com.ll.hotel.domain.member.member.repository.BusinessRepository
+import com.ll.hotel.domain.member.member.type.BusinessApprovalStatus
 import com.ll.hotel.global.exceptions.ErrorCode
 import com.ll.hotel.standard.page.dto.PageDto
 import jakarta.transaction.Transactional
@@ -14,12 +15,17 @@ import org.springframework.stereotype.Service
 class AdminBusinessService(
     private val businessRepository: BusinessRepository
 ) {
-    fun findAllPaged(page: Int): PageDto<AdminBusinessResponse.Summary> {
+    fun findAllPaged(page: Int, status: BusinessApprovalStatus?): PageDto<AdminBusinessResponse.Summary> {
         val pageable = PageRequest.of(page, 10)
-        val pagedBusiness = businessRepository.findAll(pageable)
 
-        if (pagedBusiness.hasContent().not()) {
-            ErrorCode.PAGE_NOT_FOUND.throwServiceException()
+        val pagedBusiness = if (status == null) {
+            businessRepository.findAll(pageable)
+        } else {
+            businessRepository.findByApprovalStatus(status, pageable)
+        }
+
+        if (page >= pagedBusiness.totalPages) {
+            throw ErrorCode.PAGE_NOT_FOUND.throwServiceException()
         }
 
         val pagedSummaries = pagedBusiness.map(AdminBusinessResponse.Summary::from)
