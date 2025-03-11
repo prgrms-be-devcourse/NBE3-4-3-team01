@@ -95,7 +95,6 @@ class JwtAuthFilter(
                         if (refreshResult.isSuccess) {
                             log.debug("새로운 Access Token 발급 성공")
                             
-                            // CookieUtil 사용
                             CookieUtil.addCookie(
                                 response, 
                                 "access_token", 
