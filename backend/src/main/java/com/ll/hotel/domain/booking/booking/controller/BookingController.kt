@@ -3,6 +3,7 @@ package com.ll.hotel.domain.booking.booking.controller
 import com.ll.hotel.domain.booking.booking.dto.*
 import com.ll.hotel.domain.booking.booking.service.BookingService
 import com.ll.hotel.domain.member.member.entity.Member
+import com.ll.hotel.global.mail.MailService
 import com.ll.hotel.global.request.Rq
 import com.ll.hotel.global.response.RsData
 import com.ll.hotel.standard.page.dto.PageDto
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "BookingController", description = "예약 관련 API")
 class BookingController(
     private val bookingService: BookingService,
+    private val mailService: MailService,
     private val rq: Rq
 ) {
 
@@ -39,7 +41,10 @@ class BookingController(
     fun book(
         @RequestBody @Valid bookingRequest: BookingRequest) {
         val actor: Member = rq.getActor()
-        bookingService.create(actor, bookingRequest)
+        val booking: BookingResponseDetails = bookingService.create(actor, bookingRequest)
+
+        // 예약 확정 메일링
+        mailService.sendBookingConfirmedMail(booking);
     }
 
     @GetMapping("/me")
@@ -86,7 +91,10 @@ class BookingController(
     fun cancel(
         @PathVariable("booking_id") bookingId: Long) {
         val actor: Member = rq.getActor()
-        bookingService.tryCancel(actor, bookingId)
+        val booking: BookingResponseDetails = bookingService.tryCancel(actor, bookingId)
+
+        // 예약 취소 메일링
+        mailService.sendBookingCancelledMail(booking)
     }
 
     @PatchMapping("/{booking_id}")
