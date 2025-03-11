@@ -6,9 +6,9 @@ import com.ll.hotel.global.jwt.dto.JwtProperties
 import com.ll.hotel.global.security.oauth2.dto.SecurityUser
 import com.ll.hotel.standard.util.CookieUtil
 import com.ll.hotel.standard.util.Ut
+import com.ll.hotel.standard.util.logger
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
@@ -25,7 +25,7 @@ class CustomOAuth2AuthenticationSuccessHandler(
     private val jwtProperties: JwtProperties
 ) : AuthenticationSuccessHandler {
 
-    private val log = LoggerFactory.getLogger(CustomOAuth2AuthenticationSuccessHandler::class.java)
+    private val log = logger()
 
     @Value("\${app.oauth2.authorizedRedirectUris}")
     private lateinit var authorizedRedirectUri: String
