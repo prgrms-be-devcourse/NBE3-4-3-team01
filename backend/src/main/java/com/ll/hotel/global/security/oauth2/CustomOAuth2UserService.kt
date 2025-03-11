@@ -3,7 +3,7 @@ package com.ll.hotel.global.security.oauth2
 import com.ll.hotel.domain.member.member.service.MemberService
 import com.ll.hotel.global.security.oauth2.dto.SecurityUser
 import com.ll.hotel.global.security.oauth2.repository.OAuthRepository
-import org.slf4j.LoggerFactory
+import com.ll.hotel.standard.util.logger
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException
@@ -16,7 +16,7 @@ class CustomOAuth2UserService(
     private val oAuthRepository: OAuthRepository
 ) : DefaultOAuth2UserService() {
 
-    private val log = LoggerFactory.getLogger(CustomOAuth2UserService::class.java)
+    private val log = logger()
 
     override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User {
         log.debug("OAuth2 로그인 시도")

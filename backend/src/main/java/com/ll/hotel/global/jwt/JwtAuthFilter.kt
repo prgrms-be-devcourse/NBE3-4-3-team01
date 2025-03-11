@@ -5,14 +5,14 @@ import com.ll.hotel.domain.member.member.service.MemberService
 import com.ll.hotel.global.exceptions.ErrorCode.MEMBER_NOT_FOUND
 import com.ll.hotel.global.exceptions.ErrorCode.TOKEN_EXPIRED
 import com.ll.hotel.global.exceptions.ServiceException
+import com.ll.hotel.global.jwt.dto.JwtProperties
 import com.ll.hotel.global.security.oauth2.dto.SecurityUser.Companion.of
 import com.ll.hotel.standard.util.CookieUtil
-import com.ll.hotel.global.jwt.dto.JwtProperties
+import com.ll.hotel.standard.util.logger
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.slf4j.LoggerFactory
 import org.springframework.core.Ordered
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -29,7 +29,7 @@ class JwtAuthFilter(
     private val jwtProperties: JwtProperties
 ) : OncePerRequestFilter(), Ordered {
 
-    private val log = LoggerFactory.getLogger(JwtAuthFilter::class.java)
+    private val log = logger()
 
     override fun getOrder(): Int {
         return Ordered.LOWEST_PRECEDENCE - 100

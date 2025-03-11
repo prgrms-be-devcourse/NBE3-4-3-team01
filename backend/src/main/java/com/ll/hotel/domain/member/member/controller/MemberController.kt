@@ -3,7 +3,6 @@ package com.ll.hotel.domain.member.member.controller
 import com.ll.hotel.domain.member.member.dto.JoinRequest
 import com.ll.hotel.domain.member.member.dto.MemberDTO
 import com.ll.hotel.domain.member.member.dto.MemberResponse
-import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.domain.member.member.service.MemberService
 import com.ll.hotel.global.exceptions.ErrorCode.EMAIL_ALREADY_EXISTS
 import com.ll.hotel.global.exceptions.ErrorCode.REFRESH_TOKEN_NOT_FOUND
@@ -11,11 +10,9 @@ import com.ll.hotel.global.exceptions.ServiceException
 import com.ll.hotel.global.response.RsData
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
@@ -27,8 +24,6 @@ import java.util.stream.Collectors
 class MemberController(
     private val memberService: MemberService
 ) {
-    private val log = LoggerFactory.getLogger(MemberController::class.java)
-
     @PostMapping("/join")
     @Operation(summary = "회원 가입", description = "새로운 회원을 등록합니다.")
     fun join(

@@ -6,8 +6,8 @@ import com.ll.hotel.global.jwt.dto.JwtProperties
 import com.ll.hotel.global.jwt.dto.RefreshToken
 import com.ll.hotel.global.response.RsData
 import com.ll.hotel.standard.util.Ut
+import com.ll.hotel.standard.util.logger
 import io.jsonwebtoken.MalformedJwtException
-import org.slf4j.LoggerFactory
 import org.springframework.core.env.Environment
 import org.springframework.data.redis.RedisConnectionFailureException
 import org.springframework.data.redis.core.RedisTemplate
@@ -25,8 +25,8 @@ class RefreshTokenService(
     private val redisTemplate: RedisTemplate<String, Any>,
     private val environment: Environment
 ) {
-    private val log = LoggerFactory.getLogger(this::class.java)
-    
+    private val log = logger()
+
     private val isTestProfile: Boolean
         get() = environment.activeProfiles.any { it == "test" }
 
