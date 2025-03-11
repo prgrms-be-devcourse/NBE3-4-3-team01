@@ -6,9 +6,10 @@ import com.ll.hotel.global.exceptions.ErrorCode.MEMBER_NOT_FOUND
 import com.ll.hotel.global.exceptions.ErrorCode.TOKEN_EXPIRED
 import com.ll.hotel.global.exceptions.ServiceException
 import com.ll.hotel.global.security.oauth2.dto.SecurityUser.Companion.of
+import com.ll.hotel.standard.util.CookieUtil
+import com.ll.hotel.global.jwt.dto.JwtProperties
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -24,7 +25,8 @@ import java.io.IOException
 @Component
 class JwtAuthFilter(
     private val memberService: MemberService,
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
+    private val jwtProperties: JwtProperties
 ) : OncePerRequestFilter(), Ordered {
 
     private val log = LoggerFactory.getLogger(JwtAuthFilter::class.java)
@@ -92,10 +94,16 @@ class JwtAuthFilter(
                         val refreshResult = memberService.refreshAccessToken(refreshToken!!)
                         if (refreshResult.isSuccess) {
                             log.debug("새로운 Access Token 발급 성공")
-                            val newAccessTokenCookie = Cookie("access_token", refreshResult.data)
-                            newAccessTokenCookie.path = "/"
-                            newAccessTokenCookie.isHttpOnly = true
-                            response.addCookie(newAccessTokenCookie)
+                            
+                            // CookieUtil 사용
+                            CookieUtil.addCookie(
+                                response, 
+                                "access_token", 
+                                refreshResult.data!!, 
+                                (jwtProperties.accessTokenExpiration / 1000).toInt(),
+                                true,
+                                true
+                            )
                             
                             val email = memberService.extractEmailIfValid(refreshResult.data!!)
                             val member = memberRepository.findByMemberEmail(email)
