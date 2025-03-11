@@ -40,11 +40,11 @@ export default function AdminHotelsPage() {
 
     const handleFilterChange = (status: HotelStatus | null) => {
       const queryParams = new URLSearchParams();
-      queryParams.set("page", "1"); // 상태 변경 시 첫 페이지로 이동
+      queryParams.set("page", "1");
   
       if (status) queryParams.set("status", status);
   
-      router.push(`/admin/business?${queryParams.toString()}`);
+      router.push(`/admin/hotels?${queryParams.toString()}`);
     };
 
   if (loading) return <Loading />;

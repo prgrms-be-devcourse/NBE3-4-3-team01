@@ -40,7 +40,7 @@ export default function AdminBusinessesPage() {
 
   const handleFilterChange = (status: BusinessApprovalStatus | null) => {
     const queryParams = new URLSearchParams();
-    queryParams.set("page", "1"); // 상태 변경 시 첫 페이지로 이동
+    queryParams.set("page", "1");
 
     if (status) queryParams.set("status", status);
 
