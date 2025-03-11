@@ -21,7 +21,6 @@ export default function JoinPage() {
     birthDate: "",
   });
 
-  // SMS 인증 관련 상태
   const [smsCode, setSmsCode] = useState("");
   const [isSendingSms, setIsSendingSms] = useState(false);
   const [isVerifyingSms, setIsVerifyingSms] = useState(false);
@@ -30,13 +29,10 @@ export default function JoinPage() {
   const [showSmsInput, setShowSmsInput] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   
-  // 토스트 알림 관련 상태
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
-  // 토스트 알림 표시 함수
   const showToast = (message: string, type: string = "error") => {
     setToast({ show: true, message, type });
-    // 3초 후 토스트 알림 숨기기
     setTimeout(() => {
       setToast({ show: false, message: "", type: "" });
     }, 3000);
@@ -63,7 +59,6 @@ export default function JoinPage() {
       setSmsMessage("인증번호가 발송되었습니다. 3분 내에 입력해주세요.");
       showToast("인증번호가 발송되었습니다.", "success");
     } else {
-      // 백엔드에서 오는 에러 메시지 그대로 표시
       const message = result.data?.message || "인증번호 발송에 실패했습니다.";
       setErrorMessage(message);
       showToast(message);
@@ -239,24 +234,18 @@ export default function JoinPage() {
                   value={formData.phoneNumber}
                   onChange={(e) => {
                     const value = e.target.value;
-                    // 숫자와 하이픈만 허용하고 010-0000-0000 형식으로 제한
                     let numericValue = value.replace(/[^0-9]/g, "");
                     
-                    // 최대 11자리로 제한 (010 + 0000 + 0000)
                     numericValue = numericValue.substring(0, 11);
                     
-                    // 하이픈 추가 형식화
                     let formattedNumber = "";
                     if (numericValue.length > 0) {
-                      // 첫 3자리
                       formattedNumber += numericValue.substring(0, 3);
                       
-                      // 중간 3-4자리
                       if (numericValue.length > 3) {
                         formattedNumber += "-" + numericValue.substring(3, 7);
                       }
                       
-                      // 마지막 4자리
                       if (numericValue.length > 7) {
                         formattedNumber += "-" + numericValue.substring(7, 11);
                       }
