@@ -14,6 +14,7 @@ import com.ll.hotel.global.response.RsData
 import com.ll.hotel.global.security.oauth2.entity.OAuth
 import com.ll.hotel.global.security.oauth2.repository.OAuthRepository
 import com.ll.hotel.standard.util.Ut
+import com.ll.hotel.standard.util.CookieUtil
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -157,26 +158,10 @@ class MemberService(
     }
 
     private fun deleteCookie(response: HttpServletResponse) {
-        val accessTokenCookie = Cookie("access_token", null)
-        accessTokenCookie.maxAge = 0
-        accessTokenCookie.path = "/"
-
-        val roleCookie = Cookie("role", null)
-        roleCookie.maxAge = 0
-        roleCookie.path = "/"
-
-        val refreshTokenCookie = Cookie("refresh_token", null)
-        refreshTokenCookie.maxAge = 0
-        refreshTokenCookie.path = "/"
-
-        val oauth2AuthRequestCookie = Cookie("oauth2_auth_request", null)
-        oauth2AuthRequestCookie.maxAge = 0
-        oauth2AuthRequestCookie.path = "/"
-
-        response.addCookie(accessTokenCookie)
-        response.addCookie(roleCookie)
-        response.addCookie(refreshTokenCookie)
-        response.addCookie(oauth2AuthRequestCookie)
+        CookieUtil.addCookie(response, "access_token", "", 0, true, true)
+        CookieUtil.addCookie(response, "role", "", 0, false, true)
+        CookieUtil.addCookie(response, "refresh_token", "", 0, true, true)
+        CookieUtil.addCookie(response, "oauth2_auth_request", "", 0, true, true)
     }
 
     fun isLoggedOut(token: String): Boolean {
@@ -283,18 +268,24 @@ class MemberService(
 
     private fun addAuthCookies(response: HttpServletResponse, tokens: GeneratedToken, member: Member) {
         // Access Token 쿠키
-        val accessTokenCookie = Cookie("access_token", tokens.accessToken)
-        accessTokenCookie.path = "/"
-        accessTokenCookie.isHttpOnly = true
-        accessTokenCookie.maxAge = (jwtProperties.accessTokenExpiration / 1000).toInt()
-        response.addCookie(accessTokenCookie)
+        CookieUtil.addCookie(
+            response,
+            "access_token",
+            tokens.accessToken,
+            (jwtProperties.accessTokenExpiration / 1000).toInt(),
+            true,
+            true
+        )
         
         // Refresh Token 쿠키
-        val refreshTokenCookie = Cookie("refresh_token", tokens.refreshToken)
-        refreshTokenCookie.path = "/"
-        refreshTokenCookie.isHttpOnly = true
-        refreshTokenCookie.maxAge = (jwtProperties.refreshTokenExpiration / 1000).toInt()
-        response.addCookie(refreshTokenCookie)
+        CookieUtil.addCookie(
+            response,
+            "refresh_token",
+            tokens.refreshToken,
+            (jwtProperties.refreshTokenExpiration / 1000).toInt(),
+            true,
+            true
+        )
         
         // Role 정보 쿠키
         val roleData = HashMap<String, Any>()
@@ -310,9 +301,13 @@ class MemberService(
             StandardCharsets.UTF_8
         )
         
-        val roleCookie = Cookie("role", encodedRoleData)
-        roleCookie.path = "/"
-        roleCookie.maxAge = (jwtProperties.accessTokenExpiration / 1000).toInt()
-        response.addCookie(roleCookie)
+        CookieUtil.addCookie(
+            response,
+            "role",
+            encodedRoleData,
+            (jwtProperties.accessTokenExpiration / 1000).toInt(),
+            false,
+            true
+        )
     }
 } 
