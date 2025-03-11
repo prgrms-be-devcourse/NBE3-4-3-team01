@@ -24,7 +24,7 @@ class AdminBusinessService(
             businessRepository.findByApprovalStatus(status, pageable)
         }
 
-        if (pagedBusiness.hasContent().not()) {
+        if (page >= pagedBusiness.totalPages) {
             throw ErrorCode.PAGE_NOT_FOUND.throwServiceException()
         }
 

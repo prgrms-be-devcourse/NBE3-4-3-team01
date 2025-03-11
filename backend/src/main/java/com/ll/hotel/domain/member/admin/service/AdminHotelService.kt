@@ -23,7 +23,7 @@ class AdminHotelService(
             hotelRepository.findByHotelStatus(status, pageable)
         }
 
-        if (pagedHotel.hasContent().not()) {
+        if (page >= pagedHotel.totalPages) {
             throw ErrorCode.PAGE_NOT_FOUND.throwServiceException()
         }
 
