@@ -3,7 +3,6 @@ package com.ll.hotel.domain.member.member.service
 import com.ll.hotel.global.jwt.dto.GeneratedToken
 import com.ll.hotel.global.jwt.dto.JwtProperties
 import com.ll.hotel.standard.util.Ut
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -12,7 +11,6 @@ class AuthTokenService(
     private val jwtProperties: JwtProperties,
     private val refreshTokenService: RefreshTokenService
 ) {
-    private val log = LoggerFactory.getLogger(AuthTokenService::class.java)
 
     fun generateToken(email: String, role: String): GeneratedToken {
         val accessToken = genAccessToken(email, role)
