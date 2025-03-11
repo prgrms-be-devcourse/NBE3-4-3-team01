@@ -12,6 +12,7 @@ import com.ll.hotel.domain.hotel.room.repository.RoomRepository
 import com.ll.hotel.domain.member.member.entity.Member
 import com.ll.hotel.global.exceptions.ErrorCode
 import com.ll.hotel.global.exceptions.ServiceException
+import com.ll.hotel.global.mail.MailService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -26,7 +27,7 @@ class BookingService(
     private val roomRepository: RoomRepository,
     private val hotelRepository: HotelRepository,
     private val paymentService: PaymentService,
-    private val bookingDtoMapper: BookingDtoMapper
+    private val bookingDtoMapper: BookingDtoMapper,
 ) {
     private val log = LoggerFactory.getLogger(BookingService::class.java)
 
@@ -40,7 +41,7 @@ class BookingService(
     }
 
     @Transactional
-    fun create(member: Member, bookingRequest: BookingRequest) {
+    fun create(member: Member, bookingRequest: BookingRequest): BookingResponseDetails {
         try {
             // Request로부터 관련 데이터 추출
             val room = roomRepository.findById(bookingRequest.roomId)
@@ -55,7 +56,7 @@ class BookingService(
             booking.bookingNumber = String.format("B%08d", booking.id) // ID 기반으로 예약 ID 생성
 
             // 예약 데이터 저장
-            bookingRepository.save(booking)
+            return bookingDtoMapper.getDetails(bookingRepository.save(booking))
         } catch (e: ServiceException) {
             throw e
         } catch (e: Exception) {
@@ -104,7 +105,7 @@ class BookingService(
      * 예약, 결제 취소
      * 예약 -> 결제 취소 순으로 진행
      */
-    fun tryCancel(member: Member, bookingId: Long) {
+    fun tryCancel(member: Member, bookingId: Long): BookingResponseDetails {
         val booking = findById(bookingId)
 
         // 인가, 관리자/예약 당사자/호텔 주인일 경우 가능
@@ -122,11 +123,11 @@ class BookingService(
             throw ErrorCode.BOOKING_COMPLETE_TO_CANCEL.throwServiceException()
         }
 
-        cancel(booking)
+        return cancel(member, booking)
     }
 
     @Transactional
-    fun cancel(booking: Booking) {
+    fun cancel(member: Member, booking: Booking): BookingResponseDetails {
         try {
             // Rollback 가능한 작업부터
             booking.bookingStatus = BookingStatus.CANCELLED
@@ -135,7 +136,8 @@ class BookingService(
             // 결제는 외부 api를 호출하므로 마지막에 작업
             val payment = booking.payment
             paymentService.softDelete(payment)
-            bookingRepository.save(booking)
+
+            return bookingDtoMapper.getDetails(bookingRepository.save(booking))
         } catch (e: ServiceException) {
             throw e
         } catch (e: Exception) {

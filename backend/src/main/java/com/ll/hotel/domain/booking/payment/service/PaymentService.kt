@@ -27,16 +27,16 @@ class PaymentService(
      * portone api 호출에 필요한 keys
      * application-api-keys.yml에 저장된 값을 가져옴
      */
-    @Value("\${api-keys.portone.impKey}")
+    @Value("\${portone.impKey}")
     private lateinit var impKey: String
 
-    @Value("\${api-keys.portone.impSecret}")
+    @Value("\${portone.impSecret}")
     private lateinit var impSecret: String
 
-    @Value("\${api-keys.portone.apiId}")
+    @Value("\${portone.apiId}")
     private lateinit var apiId: String
 
-    @Value("\${api-keys.portone.channel-key}")
+    @Value("\${portone.channel-key}")
     private lateinit var channelKey: String
 
     private val UID_GENERATE_LENGTH = 10

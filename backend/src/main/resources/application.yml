@@ -12,7 +12,6 @@ spring:
     include:
       - dev
       - secret
-      - api-keys
       - business-api
 
   # h2
