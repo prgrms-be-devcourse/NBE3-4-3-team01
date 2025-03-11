@@ -1,5 +1,6 @@
 package com.ll.hotel.domain.member.admin.controller
 
+import com.ll.hotel.domain.hotel.hotel.type.HotelStatus
 import com.ll.hotel.domain.member.admin.dto.request.AdminHotelRequest
 import com.ll.hotel.domain.member.admin.dto.response.AdminHotelResponse
 import com.ll.hotel.domain.member.admin.service.AdminHotelService
@@ -19,9 +20,10 @@ class AdminHotelController(
 ) {
     @Operation(summary = "호텔 전체 조회")
     @GetMapping
-    fun getAll(@RequestParam(value = "page", defaultValue = "0") page: Int)
-    : RsData<PageDto<AdminHotelResponse.Summary>> =
-        RsData.success(HttpStatus.OK, adminHotelService.findAllPaged(page))
+    fun getAll(@RequestParam(value = "page", defaultValue = "0") page: Int,
+               @RequestParam(value = "status", required = false) status: HotelStatus?
+    ): RsData<PageDto<AdminHotelResponse.Summary>> =
+        RsData.success(HttpStatus.OK, adminHotelService.findAllPaged(page, status))
 
     @Operation(summary = "호텔 단건 조회")
     @GetMapping("/{id}")

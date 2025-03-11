@@ -2,10 +2,12 @@ package com.ll.hotel.domain.hotel.hotel.repository
 
 import com.ll.hotel.domain.hotel.hotel.dto.HotelWithImageDto
 import com.ll.hotel.domain.hotel.hotel.entity.Hotel
+import com.ll.hotel.domain.hotel.hotel.type.HotelStatus
 import com.ll.hotel.domain.image.type.ImageType
 import com.ll.hotel.domain.member.member.entity.Business
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -49,4 +51,6 @@ interface HotelRepository : JpaRepository<Hotel, Long> {
     fun existsByHotelEmailAndIdNot(hotelEmail: String, hotelId: Long): Boolean
 
     fun findByBusiness(business: Business): Hotel?
+
+    fun findByHotelStatus(hotelStatus: HotelStatus, pageable: Pageable): Page<Hotel>
 }
