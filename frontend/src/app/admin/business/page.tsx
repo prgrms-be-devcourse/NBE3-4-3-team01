@@ -6,25 +6,28 @@ import Pagination from "@/components/pagination/Pagination";
 import { Button } from "@/components/ui/button";
 import { getAllBusinesses } from "@/lib/api/admin/AdminBusinessApi";
 import { AdminBusinessSummaryReponse } from "@/lib/types/admin/response/AdminBusinessResponse";
+import { BusinessApprovalStatus } from "@/lib/types/business/BusinessApprovalStatus";
 import { PageDto } from "@/lib/types/PageDto";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
 export default function AdminBusinessesPage() {
+    const router = useRouter();
   const searchParams = useSearchParams();
   const pageParam = searchParams.get("page");
+  const statusParam = searchParams.get("status");
   const currentPage =
     pageParam !== null && !isNaN(Number(pageParam)) ? Number(pageParam) - 1 : 0;
-
-  const [businesses, setBusinesses] =
-    useState<PageDto<AdminBusinessSummaryReponse> | null>(null);
+  const selectedStatus = statusParam as BusinessApprovalStatus | null;
+  const [businesses, setBusinesses] = useState<PageDto<AdminBusinessSummaryReponse> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchBusinesses = async () => {
       try {
-        const data = await getAllBusinesses(currentPage);
+        const data = await getAllBusinesses(currentPage, selectedStatus);
         setBusinesses(data);
       } catch (err) {
         setError((err as Error).message);
@@ -32,9 +35,17 @@ export default function AdminBusinessesPage() {
         setLoading(false);
       }
     };
-
     fetchBusinesses();
-  }, [currentPage]);
+  }, [currentPage, selectedStatus]);
+
+  const handleFilterChange = (status: BusinessApprovalStatus | null) => {
+    const queryParams = new URLSearchParams();
+    queryParams.set("page", "1"); // 상태 변경 시 첫 페이지로 이동
+
+    if (status) queryParams.set("status", status);
+
+    router.push(`/admin/business?${queryParams.toString()}`);
+  };
 
   if (loading) return <Loading />;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
@@ -57,6 +68,33 @@ export default function AdminBusinessesPage() {
             <p className="text-lg text-gray-600 mb-8">
               등록된 사업자 정보를 확인하고 관리하세요
             </p>
+          </div>
+          {/* ✅ 승인 상태 필터 버튼 */}
+          <div className="flex justify-center space-x-2 mb-6">
+            <Button
+              variant={selectedStatus === null ? "default" : "outline"}
+              onClick={() => handleFilterChange(null)}
+            >
+              전체
+            </Button>
+            <Button
+              variant={selectedStatus === "PENDING" ? "default" : "outline"}
+              onClick={() => handleFilterChange(BusinessApprovalStatus.PENDING)}
+            >
+              승인 대기
+            </Button>
+            <Button
+              variant={selectedStatus === "APPROVED" ? "default" : "outline"}
+              onClick={() => handleFilterChange(BusinessApprovalStatus.APPROVED)}
+            >
+              승인 완료
+            </Button>
+            <Button
+              variant={selectedStatus === "REJECTED" ? "default" : "outline"}
+              onClick={() => handleFilterChange(BusinessApprovalStatus.REJECTED)}
+            >
+              승인 거절
+            </Button>
           </div>
           {/* 사업자 리스트 */}
           <div className="w-full max-w-[75rem] mx-auto">

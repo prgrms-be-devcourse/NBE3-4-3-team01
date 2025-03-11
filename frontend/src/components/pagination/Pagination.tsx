@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./Pagination.module.css";
+import { useSearchParams } from "next/navigation";
 
 type PaginationProps = {
   currentPage: number;
@@ -8,6 +9,9 @@ type PaginationProps = {
 };
 
 const Pagination = ({ currentPage, totalPages, basePath }: PaginationProps) => {
+  const searchParams = useSearchParams();
+  const statusParam = searchParams.get("status");
+
   // 5개의 페이지 번호 범위 계산
   const getPageRange = () => {
     const range = [];
@@ -30,9 +34,14 @@ const Pagination = ({ currentPage, totalPages, basePath }: PaginationProps) => {
   };
 
   const createLink = (page: number) => {
-    let path = basePath.startsWith("/") ? basePath : `/${basePath}`;
+    const queryParams = new URLSearchParams();
+    queryParams.set("page", String(page));
 
-    return `${path}${path.includes("?") ? "&" : "?"}page=${page}`;
+    if (statusParam) {
+      queryParams.set("status", statusParam);
+    }
+
+    return `${basePath}?${queryParams.toString()}`;
   };
 
   return (

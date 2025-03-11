@@ -7,12 +7,23 @@ import {
   HotelApprovalResult,
 } from "@/lib/types/admin/response/AdminHotelResponse";
 import { PageDto } from "@/lib/types/PageDto";
+import { HotelStatus } from "@/lib/types/hotel/HotelStatus";
 
 export const getAllHotelsForAdmin = async (
-  page: number = 0
+  page: number = 0,
+  status: HotelStatus | null = null
 ): Promise<PageDto<AdminHotelSummaryReponse>> => {
+
+  const queryParams = new URLSearchParams();
+
+    queryParams.set("page", String(page));
+  
+    if (status) {
+      queryParams.set("status", status);
+    }
+  
   const data = await fetchAPI<PageDto<AdminHotelSummaryReponse>>(
-    `http://localhost:8080/api/admin/hotels?page=${page}`
+    `http://localhost:8080/api/admin/hotels?${queryParams.toString()}`
   );
 
   return {
