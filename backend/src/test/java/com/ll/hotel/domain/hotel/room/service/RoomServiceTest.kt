@@ -167,7 +167,6 @@ internal class RoomServiceTest {
         assertEquals(res.roomId, roomId)
         assertEquals(res.roomName, "객실1")
         assertEquals(res.basePrice, 300000)
-        assertEquals(res.bedTypeNumber, 4)
         assertEquals(res.bedTypeNumber.bedDouble, 2)
         assertEquals(res.bedTypeNumber.bedKing, 1)
         assertEquals(res.bedTypeNumber.bedTriple, 0)
