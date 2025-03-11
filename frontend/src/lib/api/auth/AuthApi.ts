@@ -31,14 +31,61 @@ export const sendSmsVerification = async (phoneNumber: string) => {
       body: JSON.stringify({ phoneNumber }),
     });
 
-    if (response.ok) {
-      return await response.json();
+    const responseText = await response.text();
+    let responseData;
+    
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (e) {
+      return { 
+        isSuccess: false, 
+        data: { 
+          success: false, 
+          message: responseText || "인증번호 발송에 실패했습니다." 
+        } 
+      };
     }
-
-    throw new Error(await response.text());
-  } catch (error) {
-    console.error("SMS 인증번호 발송 API 오류:", error);
-    throw error;
+    
+    if (response.ok && responseData.resultCode === 'OK') {
+      return { 
+        isSuccess: true, 
+        data: responseData 
+      };
+    }
+    
+    let errorMessage = responseText;
+    
+    if (responseData) {
+      if (responseData.data && responseData.data.message) {
+        errorMessage = responseData.data.message;
+      } else if (responseData.message) {
+        errorMessage = responseData.message;
+      } else if (responseData.msg) {
+        errorMessage = responseData.msg;
+      } else if (responseData.error) {
+        errorMessage = responseData.error;
+      }
+    }
+    
+    if (!errorMessage || errorMessage === '{}') {
+      errorMessage = "인증번호 발송에 실패했습니다.";
+    }
+    
+    return { 
+      isSuccess: false, 
+      data: { 
+        success: false, 
+        message: errorMessage 
+      } 
+    };
+  } catch (error: any) {
+    return { 
+      isSuccess: false, 
+      data: { 
+        success: false, 
+        message: error?.message || "인증번호 발송 중 오류가 발생했습니다." 
+      } 
+    };
   }
 };
 
