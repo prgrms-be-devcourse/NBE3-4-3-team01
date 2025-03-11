@@ -28,9 +28,8 @@ export default function RegisterBusiness() {
         "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
       router.push("/login");
     } catch (error: any) {
-      const msg = error.response?.data?.msg;
-      if (msg) {
-        alert(msg);
+      if (error.message) {
+        alert(error.message);
       } else {
         setError("사업자 등록에 실패했습니다.");
       }

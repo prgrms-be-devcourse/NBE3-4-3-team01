@@ -1,26 +1,26 @@
 "use client";
 
+import Navigation from "@/components/navigation/Navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { uploadImagesToS3 } from "@/lib/api/aws/AwsS3Api";
 import {
   findAllHotelOptions,
   findHotelDetail,
   modifyHotel,
   saveHotelImageUrls,
 } from "@/lib/api/hotel/BusinessHotelApi";
+import { GetAllHotelOptionResponse } from "@/lib/types/hotel/GetAllHotelOptionResponse";
 import { PutHotelRequest } from "@/lib/types/hotel/PutHotelRequest";
+import { PutHotelResponse } from "@/lib/types/hotel/PutHotelResponse";
+import { PresignedUrlsResponse } from "@/lib/types/review/PresignedUrlsResponse";
+import { MoveLeft, Star, XCircle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { PresignedUrlsResponse } from "@/lib/types/review/PresignedUrlsResponse";
-import { PutHotelResponse } from "@/lib/types/hotel/PutHotelResponse";
-import { uploadImagesToS3 } from "@/lib/api/aws/AwsS3Api";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import DatePicker from "react-datepicker";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MoveLeft, Star, XCircle } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
-import { GetAllHotelOptionResponse } from "@/lib/types/hotel/GetAllHotelOptionResponse";
-import Navigation from "@/components/navigation/Navigation";
 
 export default function ModifyHotelPage() {
   const params = useParams();
@@ -170,7 +170,6 @@ export default function ModifyHotelPage() {
 
     if (!hotelId) {
       alert("유효하지 않은 호텔 ID입니다.");
-      console.error("유효하지 않은 호텔 ID입니다.");
       return;
     }
 
@@ -195,15 +194,15 @@ export default function ModifyHotelPage() {
         hotelId,
         requestBody
       );
-      console.log("response: ", response);
-      const presignedUrlsResponse: PresignedUrlsResponse =
-        response.urlsResponse;
-      console.log("서버 응답:", presignedUrlsResponse);
 
-      setPresignedUrls(presignedUrlsResponse.presignedUrls);
-      console.log(presignedUrls);
-      alert("호텔이 성공적으로 수정되었습니다.");
-      router.push("/business/hotel/management");
+      const presignedUrlResponse: PresignedUrlsResponse = response.urlsResponse;
+
+      if (presignedUrlResponse.presignedUrls.length === 0) {
+        alert("호텔이 성공적으로 수정되었습니다.");
+        router.push("/business/hotel/management");
+      }
+
+      setPresignedUrls(presignedUrlResponse.presignedUrls);
     } catch (error) {
       alert(error);
     }
@@ -220,7 +219,10 @@ export default function ModifyHotelPage() {
     try {
       await uploadImagesToS3(presignedUrls, images);
       await saveImageUrls();
+
       console.log("이미지가 성공적으로 업로드되었습니다.");
+      alert("호텔이 성공적으로 수정되었습니다.");
+      router.push("/business/hotel/management");
     } catch (error) {
       console.error(error);
       alert(error);

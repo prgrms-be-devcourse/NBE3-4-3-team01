@@ -1,14 +1,13 @@
-import { Empty } from "../../types/Empty";
-import { GetAllHotelOptionResponse } from "../../types/hotel/GetAllHotelOptionResponse";
-import { GetHotelDetailResponse } from "../../types/hotel/GetHotelDetailResponse";
-import { GetHotelRevenueResponse } from "../../types/hotel/GetHotelRevenueResponse";
+import { PostHotelRequest } from "@/lib/types/hotel/PostHotelRequest";
 import { PostHotelResponse } from "@/lib/types/hotel/PostHotelResponse";
 import { PutHotelRequest } from "@/lib/types/hotel/PutHotelRequest";
 import { PutHotelResponse } from "@/lib/types/hotel/PutHotelResponse";
-import { PostHotelRequest } from "@/lib/types/hotel/PostHotelRequest";
-import { RsData } from "../../types/RsData";
 import { PageDto } from "../../types/PageDto";
+import { RsData } from "../../types/RsData";
+import { GetAllHotelOptionResponse } from "../../types/hotel/GetAllHotelOptionResponse";
+import { GetHotelDetailResponse } from "../../types/hotel/GetHotelDetailResponse";
 import { GetHotelResponse } from "../../types/hotel/GetHotelResponse";
+import { GetHotelRevenueResponse } from "../../types/hotel/GetHotelRevenueResponse";
 
 const BASE_URL = "http://localhost:8080/api/hotels";
 
@@ -91,12 +90,17 @@ export const findHotelDetail = async (
 // 예약 가능한 객실이 존재하는 호텔 상세 조회
 export const findHotelDetailWithAvailableRooms = async (
   hotelId: number,
-  checkIndate?: string,
-  checkoutDate?: string,
+  checkInDate?: string,
+  checkOutDate?: string,
   personal?: string
 ): Promise<GetHotelDetailResponse> => {
   try {
-    const response = await fetch(`${BASE_URL}/${hotelId}`);
+    const params = new URLSearchParams();
+    if (checkInDate) params.set("checkInDate", checkInDate);
+    if (checkOutDate) params.set("checkOutDate", checkOutDate);
+    if (personal) params.set("personal", personal);
+
+    const response = await fetch(`${BASE_URL}/${hotelId}?${params.toString()}`);
 
     const rsData = await response
       .clone()
@@ -213,7 +217,7 @@ export const getHotelList = async (
   filterName: string,
   streetAddress: string,
   checkInDate: string,
-  checkoutDate: string,
+  checkOutDate: string,
   personal: number,
   filterDirection?: string
 ): Promise<PageDto<GetHotelResponse>> => {
@@ -223,7 +227,7 @@ export const getHotelList = async (
     filterName: filterName,
     streetAddress: streetAddress,
     checkInDate: checkInDate,
-    checkoutDate: checkoutDate,
+    checkOutDate: checkOutDate,
     personal: personal.toString(),
   });
 

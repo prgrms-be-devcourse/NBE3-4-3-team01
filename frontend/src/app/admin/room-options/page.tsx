@@ -60,7 +60,7 @@ export default function RoomOptionsPage() {
         return updatedEditingOptions;
       });
     } catch (err) {
-      setError("객실 옵션 수정 중 오류가 발생했습니다.");
+      setError("옵션 수정 중 오류가 발생했습니다.");
     }
   };
 
@@ -72,7 +72,7 @@ export default function RoomOptionsPage() {
       setNewOption("");
       fetchOptions();
     } catch (error) {
-      setError("객실 옵션 추가 중 오류가 발생헀습니다.");
+      setError("옵션 추가 중 오류가 발생헀습니다.");
     }
   };
 
@@ -82,9 +82,8 @@ export default function RoomOptionsPage() {
       await deleteRoomOption(optionId);
       fetchOptions();
     } catch (error: any) {
-      const msg = error.response?.data?.msg;
-      if (msg) {
-        alert(error.response?.data?.msg);
+      if (error.message) {
+        alert(error.message);
       } else {
         setError("옵션 삭제 중 오류가 발생했습니다.");
       }

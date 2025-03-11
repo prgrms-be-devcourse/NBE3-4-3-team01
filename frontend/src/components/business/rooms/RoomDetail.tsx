@@ -9,7 +9,7 @@ import { FaBed, FaUsers, FaTag, FaCheckCircle } from "react-icons/fa";
 interface RoomDetailProps {
   room: GetRoomDetailResponse;
   checkInDate?: string;
-  checkoutDate?: string;
+  checkOutDate?: string;
 }
 
 const RoomDetail: React.FC<RoomDetailProps> = ({ room }) => {
@@ -24,7 +24,7 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ room }) => {
   const param = useParams();
   const roomDto = room.roomDto;
   const checkInDate = searchParams.get("checkInDate") || "";
-  const checkoutDate = searchParams.get("checkoutDate") || "";
+  const checkOutDate = searchParams.get("checkOutDate") || "";
 
   useEffect(() => {
     const cookieHotelId = cookie?.hotelId ? Number(cookie.hotelId) : -1;
@@ -72,7 +72,7 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ room }) => {
     params.set("hotelId", (hotelId ?? "").toString());
     params.set("roomId", roomId.toString());
     if (checkInDate) params.set("checkInDate", checkInDate);
-    if (checkoutDate) params.set("checkoutDate", checkoutDate);
+    if (checkOutDate) params.set("checkOutDate", checkOutDate);
 
     console.log(
       "예약 페이지로 이동 URL : ",
