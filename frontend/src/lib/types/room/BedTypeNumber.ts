@@ -10,10 +10,10 @@ export const BED_TYPES = [
 export type BedType = (typeof BED_TYPES)[number];
 
 export interface BedTypeNumber {
-  SINGLE: number;
-  DOUBLE: number;
-  QUEEN: number;
-  KING: number;
-  TWIN: number;
-  TRIPLE: number;
+  bedSingle: number;
+  bedDouble: number;
+  bedQueen: number;
+  bedKing: number;
+  bedTwin: number;
+  bedTriple: number;
 }
